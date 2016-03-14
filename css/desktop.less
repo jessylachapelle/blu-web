@@ -1,0 +1,227 @@
+@import "style";
+
+/* Éléments généraux
+===================*/
+html, body {
+	min-width: @min-page-width;
+}
+
+
+/* En-tête
+==========*/
+header {
+	height:           205px;
+	background-image: url(../img/header.jpg);
+	background-size:  cover;
+
+	img {
+  	margin: 20px 0 20px 6%;
+  	height: 100px;
+  }
+
+  form {
+    display: inline;
+  }
+
+  input {
+  	float:        right;
+  	margin-right: 5%;
+  	margin-top:   50px;
+  }
+
+  nav {
+  	margin:        auto;
+  	margin-bottom: 0;
+  	width:         90%;
+  	max-width:     @max-menu-width;
+  	box-shadow:    4px 4px 2px black;
+
+  	a {
+    	display: inline-block;
+    	width:   19%;
+    }
+  }
+}
+
+
+/* Contenu
+==========*/
+main {
+	width:      80%;
+	max-width:  @max-menu-width;
+	min-height: 60vh;
+
+  h1 {
+    margin-top: 1em;
+  }
+}
+
+form:not(.nostyle) {
+  width: intrinsic;
+  width: -moz-min-content;
+  width: -webkit-min-content;
+
+  input:not[type=date] {
+  	width: 300px;
+  }
+}
+
+main#nouvelle{
+  h2, p {
+    margin : 10px;
+  }
+  hr{
+    width : 50%;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  p.pdate{
+    font-size: 0.9em;
+    color: grey;
+  }
+}
+
+main#admin-nouvelle{
+
+  form {
+    width: 70%;
+    input{
+      width: 100%;
+      display: block;
+    }
+    input[type=date]{
+      width: 30%;
+    }
+    button{
+      margin: 1em;
+    }
+  }
+  table {    
+    tbody {
+      tr {
+        td:nth-child(1) {
+          width: 15%;
+        }
+        td:nth-child(3) {
+          width: 10%;
+        }
+        td:nth-child(4) {
+          text-align: center;
+          width: 10%;
+        }
+        td:nth-child(5) {
+          text-align: center;
+          width: 5%; 
+        }
+      }
+    }
+  }
+}
+
+/* Pied de page
+===============*/
+footer {
+	background-image: url(../img/footer.jpg);
+
+	div {
+  	left:             5%;
+    right:            5%;
+		width:            90%;
+		max-width:        @max-menu-width;
+		background-color: fade(@button-color, 70%);
+	}
+}
+
+
+/* Par attribut
+====================*/
+[data-glyph=menu] {
+  display: none;
+}
+
+
+/* Class
+========*/
+.inline {
+  display:        inline-block;
+  vertical-align: top;
+  width:          49%;
+
+  *:first-child {
+    margin-top:  0;
+    padding-top: 0;
+  }
+}
+
+
+/* ID
+======*/
+#courriel, #nodossier {
+  margin-top: 	 0.5em;
+  margin-bottom: 1em;
+}
+
+#tooltip {
+  display: 					block;
+  position: 				fixed;
+  background-color: #BBB;
+  padding: 					0 15px;
+  width: 						300px;
+  box-shadow: 			5px 5px 5px @text-color;
+
+  &:before {
+    content: 			 "";
+    display: 			 block;
+    float: 				 left;
+    margin-left: 	 -33px;
+    margin-top: 	 -1px;
+  	width: 				 0;
+  	height: 			 0;
+  	border-top: 	 20px solid transparent;
+  	border-bottom: 20px solid transparent;
+  	border-right:  20px solid #BBB;
+  }
+}
+
+/* Spécifique au formulaire de coordonnées
+==========================================*/
+#overlay {
+  form {
+    margin-top: 10%;
+    max-width: 	590px;
+
+    div {
+      display: block;
+
+      input, button {
+        display: inline-block;
+      }
+    }
+
+    #nocivic, #app {
+      width: 85px;
+    }
+
+    #codepostal {
+      width: 110px;
+    }
+
+    #ville {
+      width: 185px;
+    }
+
+    #province {
+      width: 				 200px;
+      margin-bottom: 20px;
+    }
+
+    #telephone1, #telephone2 {
+      width: 200px;
+    }
+
+    #courriel {
+      width: 530px;
+    }
+  }
+}

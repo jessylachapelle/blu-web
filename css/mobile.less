@@ -1,0 +1,149 @@
+@import "style";
+
+/* Éléments généraux
+===================*/
+html, body {
+	width:      100%;
+  overflow-x: hidden;
+}
+
+/* En-tête
+==========*/
+header {
+	background-color: fade(@button-color, 80%);
+
+	img {
+  	margin: auto;
+  	height: 75px;
+  }
+
+  form {
+    display: block;
+    padding: 10px 0;
+  }
+
+  input {
+  	margin : auto;
+  }
+
+  nav {
+  	width:            67%;
+
+  	a {
+    	display:         block;
+    	width:           100%;
+      border-bottom: 1px solid white;
+    }
+  }
+}
+
+/* Contenu
+==========*/
+main {
+	width: 95%;
+}
+
+section {
+  max-width: 100%;
+}
+
+form {
+  width: 95%;
+
+  input {
+    margin: auto;
+    width:  90%;
+    margin: 10px 0;
+  }
+
+  select {
+    margin: auto;
+    width:  95%;
+  }
+}
+
+table:not(#infocompte) {
+  width: 100%;
+
+  th, td {
+    white-space: nowrap;
+  }
+}
+
+/* Pied de page
+===============*/
+footer {
+	div {
+		width:            100%;
+		background-color: fade(@button-color, 80%);
+	}
+
+	p {
+	  padding-top: 20px;
+  }
+}
+
+/* Par attribut
+====================*/
+[data-glyph=menu] {
+  position:  absolute;
+  top:       15px;
+  left:      15px;
+  font-size: 1.5em;
+  cursor:    pointer;
+  color:     @white;
+}
+
+/* Class
+========*/
+.slideout-menu {
+  position:                   absolute;
+  left:                       0;
+  top:                        0;
+  bottom:                     0;
+  right:                      0;
+  z-index:                    2;
+  width:                      256px;
+  overflow-y:                 auto;
+  -webkit-overflow-scrolling: touch;
+  display:                    none;
+}
+
+.slideout-panel {
+  position: relative;;
+  z-index:  1;
+}
+
+.slideout-open, .slideout-open body, .slideout-open .slideout-panel {
+  overflow: hidden;
+}
+
+.slideout-open .slideout-menu {
+  display: block;
+}
+
+.table-wrapper {
+  overflow-x: scroll;
+}
+
+
+/* Spécifique au formulaire de coordonnées
+==========================================*/
+#overlay {
+  overflow-y: scroll;
+
+  form {
+    width: 95%;
+
+    input {
+      margin: auto;
+      width:  90%;
+      margin: 10px 0;
+    }
+
+    select {
+      margin: auto;
+      width:  95%;
+    }
+  }
+}
