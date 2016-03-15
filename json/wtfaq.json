@@ -1,0 +1,26 @@
+{
+  "title": "La foire aux questions",
+  "qa": [
+    {
+      "question": "Quel pourcentage du prix de vente conservez-vous lors de la vente d’un de mes livres ?",
+      "answer": "Zéro pourcent. Notre service est totalement gratuit."
+    },
+    {
+      "question": "Comment financez-vous le service de la Banque de livres ?",
+      "answer": "Les cotisations étudiantes, recueillies en début d’année, représentent notre principale source de financement. Il arrive aussi que certaines personnes vendent des livres, mais ne récoltent jamais l’argent que nous leur devons. Cet argent nous permet de payer les salaires, de garder notre équipement à jour et d’améliorer notre service."
+    },
+    {
+      "question": "Comment savoir si mes livres ont été vendus ?",
+      "answer": "Il vous suffit d’accéder à la page sommaire de votre compte. Si nous vous devons de l’argent, le message « Nous vous devons x $. » sera inscrit au centre de la première page-écran, dans le cas contraire, le message « Vous n’avez vendu aucun livre depuis votre dernier passage. » s’affichera."
+    },
+    {
+      "question": "Comment récupérer l’argent que l’AECS me doit ?",
+      "answer": "Vous devez venir nous voir à l’Artishow lors de la période de remise d’argent qui a lieu au début de la session. Durant le reste de l’année, vous devez nous faire la demande par courriel à blu@aecs.info, en spécifiant votre nom, prénom, adresse postale, numéro de téléphone et numéro de dossier (ce numéro est requis et obligatoire). Nous vous enverrons alors un accusé de réception par courriel et un chèque par la poste au cours des semaines suivantes."
+    },
+    {
+      "question": "Comment renouveler mon compte ?",
+      "answer": "Votre compte se renouvèle automatiquement pour une période d’un (1) an lorsque vous réclamez l’argent que l’AECS vous doit et lorsque vous ajoutez des livres à vendre. Vous pouvez aussi nous contacter afin de nous demander explicitement de renouveler votre compte."
+    }
+  ],
+  "note": "Pour toute autre question, n’hésitez pas à nous contacter, nous nous ferons un plaisir de vous répondre."
+}
