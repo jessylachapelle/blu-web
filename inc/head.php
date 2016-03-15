@@ -1,4 +1,5 @@
 <meta charset="utf-8" />
+<title>Banque de livres usagés</title>
 <link rel="shortcut icon" href="img/favicon.ico">
 <link rel="icon" href="img/favicon.ico">
 <meta name="author" content="Jessy Lachapelle, Dereck Pouliot, Alizée Fournier et Marc Dupuis" />

@@ -4,7 +4,7 @@ if (isset($_POST['courriel']) && isset($_POST['nodossier']) && (strlen($_POST['n
   $query = "SELECT no, courriel FROM membre WHERE no LIKE '%$nodossier'";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     if($_POST['courriel'] == $row['courriel']) {
@@ -15,8 +15,8 @@ if (isset($_POST['courriel']) && isset($_POST['nodossier']) && (strlen($_POST['n
   		$_SESSION['expire'] = null;
 
   		if(!isset($_POST['connexion'])) {
-    		$_SESSION['start'] = time();
-        $_SESSION['expire'] = $_SESSION['start'] + (1800);
+    		$_SESSION['requiredt'] = time();
+        $_SESSION['expire'] = $_SESSION['requiredt'] + (1800);
   		}
       return redirect(200);
     }

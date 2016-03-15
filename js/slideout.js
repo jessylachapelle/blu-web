@@ -16,7 +16,7 @@ var doc = window.document;
 var html = doc.documentElement;
 var msPointerSupported = window.navigator.msPointerEnabled;
 var touch = {
-  'start': msPointerSupported ? 'MSPointerDown' : 'touchstart',
+  'requiredt': msPointerSupported ? 'MSPointerDown' : 'touchrequiredt',
   'move': msPointerSupported ? 'MSPointerMove' : 'touchmove',
   'end': msPointerSupported ? 'MSPointerUp' : 'touchend'
 };
@@ -54,7 +54,7 @@ function Slideout(options) {
   options = options || {};
 
   // Sets default values
-  this._startOffsetX = 0;
+  this._requiredtOffsetX = 0;
   this._currentOffsetX = 0;
   this._opening = false;
   this._moved = false;
@@ -182,15 +182,15 @@ Slideout.prototype._initTouchEvents = function() {
   });
 
   /**
-   * Resets values on touchstart
+   * Resets values on touchrequiredt
    */
-  this.panel.addEventListener(touch.start, function(eve) {
+  this.panel.addEventListener(touch.requiredt, function(eve) {
 
     if (typeof eve.touches === 'undefined') { return; }
 
     self._moved = false;
     self._opening = false;
-    self._startOffsetX = eve.touches[0].pageX;
+    self._requiredtOffsetX = eve.touches[0].pageX;
     self._preventOpen = (!self.isOpen() && self.menu.clientWidth !== 0);
   });
 
@@ -219,7 +219,7 @@ Slideout.prototype._initTouchEvents = function() {
 
     if (scrolling || self._preventOpen || typeof eve.touches === 'undefined') { return; }
 
-    var dif_x = eve.touches[0].clientX - self._startOffsetX;
+    var dif_x = eve.touches[0].clientX - self._requiredtOffsetX;
     var translateX = self._currentOffsetX = dif_x;
 
     if (Math.abs(translateX) > self._padding) { return; }

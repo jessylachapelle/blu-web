@@ -16,7 +16,7 @@ function renouveleCompte($noMembre) {
   $query = "UPDATE membre SET derniere_activite='$date' WHERE no=$noMembre";
   
   include "../#/connection.php";
-  mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   mysqli_close($connection);
 } 
 ?>

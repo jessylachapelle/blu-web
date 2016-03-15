@@ -5,7 +5,7 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
   $query = "SELECT user FROM login WHERE user='$user' AND password='$password' AND admin=1";
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     session_start ();
@@ -14,8 +14,8 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
     $_SESSION['expire'] = null;
 
     if(!isset($_POST['connexion'])) {
-      $_SESSION['start'] = time();
-      $_SESSION['expire'] = $_SESSION['start'] + (1800);
+      $_SESSION['requiredt'] = time();
+      $_SESSION['expire'] = $_SESSION['requiredt'] + (1800);
     }
 
     return redirect(200);

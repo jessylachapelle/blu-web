@@ -26,7 +26,7 @@ module.exports = function(window, options) {
     // Load styles asynchronously (default: false)
     //
     // This is set to `false` by default, so that the body
-    // doesn't start loading before the stylesheets are parsed.
+    // doesn't requiredt loading before the stylesheets are parsed.
     // Setting this to `true` can result in flickering.
     //
     options.async = options.async || false;
@@ -62,7 +62,7 @@ module.exports = function(window, options) {
 /**
  * Kicks off less and compiles any stylesheets
  * used in the browser distributed version of less
- * to kick-start less using the browser api
+ * to kick-requiredt less using the browser api
  */
 /*global window */
 
@@ -702,8 +702,8 @@ module.exports = function(window, options) {
             fileManager.clearFileCache();
         }
         return new Promise(function (resolve, reject) {
-            var startTime, endTime, totalMilliseconds;
-            startTime = endTime = new Date();
+            var requiredtTime, endTime, totalMilliseconds;
+            requiredtTime = endTime = new Date();
 
             loadStyleSheets(function (e, css, _, sheet, webInfo) {
                 if (e) {
@@ -719,10 +719,10 @@ module.exports = function(window, options) {
                 browser.createCSS(window.document, css, sheet);
                 less.logger.info("css for " + sheet.href + " generated in " + (new Date() - endTime) + 'ms');
                 if (webInfo.remaining === 0) {
-                    totalMilliseconds = new Date() - startTime;
+                    totalMilliseconds = new Date() - requiredtTime;
                     less.logger.info("less has finished. css generated in " + totalMilliseconds + 'ms');
                     resolve({
-                        startTime: startTime,
+                        requiredtTime: requiredtTime,
                         endTime: endTime,
                         totalMilliseconds: totalMilliseconds,
                         sheets: less.sheets.length
@@ -1701,11 +1701,11 @@ module.exports = function(environment) {
         var currentDirectory = currentFileInfo.relativeUrls ?
             currentFileInfo.currentDirectory : currentFileInfo.entryPath;
 
-        var fragmentStart = filePath.indexOf('#');
+        var fragmentrequiredt = filePath.indexOf('#');
         var fragment = '';
-        if (fragmentStart !== -1) {
-            fragment = filePath.slice(fragmentStart);
-            filePath = filePath.slice(0, fragmentStart);
+        if (fragmentrequiredt !== -1) {
+            fragment = filePath.slice(fragmentrequiredt);
+            filePath = filePath.slice(0, fragmentrequiredt);
         }
 
         var fileManager = environment.getFileManager(filePath, currentDirectory, this.context, environment, true);
@@ -2075,7 +2075,7 @@ module.exports = function(environment) {
 
         function throwArgumentDescriptor() {
             throw { type: "Argument",
-					message: "svg-gradient expects direction, start_color [start_position], [color position,]...," +
+					message: "svg-gradient expects direction, requiredt_color [requiredt_position], [color position,]...," +
 							" end_color [end_position] or direction, color list" };
         }
 
@@ -2616,7 +2616,7 @@ module.exports = function (input, fail) {
     var len = input.length, level = 0, parenLevel = 0,
         lastOpening, lastOpeningParen, lastMultiComment, lastMultiCommentEndBrace,
         chunks = [], emitFrom = 0,
-        chunkerCurrentIndex, currentChunkStartIndex, cc, cc2, matched;
+        chunkerCurrentIndex, currentChunkrequiredtIndex, cc, cc2, matched;
 
     function emitChunk(force) {
         var len = chunkerCurrentIndex - emitFrom;
@@ -2664,7 +2664,7 @@ module.exports = function (input, fail) {
             case 39:
             case 96:                        // ", ' and `
                 matched = 0;
-                currentChunkStartIndex = chunkerCurrentIndex;
+                currentChunkrequiredtIndex = chunkerCurrentIndex;
                 for (chunkerCurrentIndex = chunkerCurrentIndex + 1; chunkerCurrentIndex < len; chunkerCurrentIndex++) {
                     cc2 = input.charCodeAt(chunkerCurrentIndex);
                     if (cc2 > 96) { continue; }
@@ -2677,7 +2677,7 @@ module.exports = function (input, fail) {
                     }
                 }
                 if (matched) { continue; }
-                return fail("unmatched `" + String.fromCharCode(cc) + "`", currentChunkStartIndex);
+                return fail("unmatched `" + String.fromCharCode(cc) + "`", currentChunkrequiredtIndex);
             case 47:                        // /, check for comment
                 if (parenLevel || (chunkerCurrentIndex == len - 1)) { continue; }
                 cc2 = input.charCodeAt(chunkerCurrentIndex + 1);
@@ -2689,7 +2689,7 @@ module.exports = function (input, fail) {
                     }
                 } else if (cc2 == 42) {
                     // /*, find */
-                    lastMultiComment = currentChunkStartIndex = chunkerCurrentIndex;
+                    lastMultiComment = currentChunkrequiredtIndex = chunkerCurrentIndex;
                     for (chunkerCurrentIndex = chunkerCurrentIndex + 2; chunkerCurrentIndex < len - 1; chunkerCurrentIndex++) {
                         cc2 = input.charCodeAt(chunkerCurrentIndex);
                         if (cc2 == 125) { lastMultiCommentEndBrace = chunkerCurrentIndex; }
@@ -2697,7 +2697,7 @@ module.exports = function (input, fail) {
                         if (input.charCodeAt(chunkerCurrentIndex + 1) == 47) { break; }
                     }
                     if (chunkerCurrentIndex == len - 1) {
-                        return fail("missing closing `*/`", currentChunkStartIndex);
+                        return fail("missing closing `*/`", currentChunkrequiredtIndex);
                     }
                     chunkerCurrentIndex++;
                 }
@@ -2793,7 +2793,7 @@ module.exports = function() {
     parserInput.$str = function(tok) {
         var tokLength = tok.length;
 
-        // https://jsperf.com/string-startswith/21
+        // https://jsperf.com/string-requiredtswith/21
         for (var i = 0; i < tokLength; i++) {
             if (input.charAt(parserInput.i + i) !== tok.charAt(i)) {
                 return null;
@@ -2806,8 +2806,8 @@ module.exports = function() {
 
     parserInput.$quoted = function() {
 
-        var startChar = input.charAt(parserInput.i);
-        if (startChar !== "'" && startChar !== '"') {
+        var requiredtChar = input.charAt(parserInput.i);
+        if (requiredtChar !== "'" && requiredtChar !== '"') {
             return;
         }
         var length = input.length,
@@ -2822,7 +2822,7 @@ module.exports = function() {
                 case "\r":
                 case "\n":
                     break;
-                case startChar:
+                case requiredtChar:
                     var str = input.substr(currentPosition, i + 1);
                     skipWhitespace(i + 1);
                     return str;
@@ -2869,11 +2869,11 @@ module.exports = function() {
                     parserInput.commentStore.push(comment);
                     continue;
                 } else if (nextChar === '*') {
-                    var nextStarSlash = inp.indexOf("*/", parserInput.i + 2);
-                    if (nextStarSlash >= 0) {
+                    var nextrequiredSlash = inp.indexOf("*/", parserInput.i + 2);
+                    if (nextrequiredSlash >= 0) {
                         comment = {
                             index: parserInput.i,
-                            text: inp.substr(parserInput.i, nextStarSlash + 2 - parserInput.i),
+                            text: inp.substr(parserInput.i, nextrequiredSlash + 2 - parserInput.i),
                             isLineComment: false
                         };
                         parserInput.i += comment.text.length - 1;
@@ -2908,7 +2908,7 @@ module.exports = function() {
     // just return the match.
     parserInput.peek = function(tok) {
         if (typeof tok === 'string') {
-            // https://jsperf.com/string-startswith/21
+            // https://jsperf.com/string-requiredtswith/21
             for (var i = 0; i < tok.length; i++) {
                 if (input.charAt(parserInput.i + i) !== tok.charAt(i)) {
                     return false;
@@ -2940,7 +2940,7 @@ module.exports = function() {
         return (c > CHARCODE_9 || c < CHARCODE_PLUS) || c === CHARCODE_FORWARD_SLASH || c === CHARCODE_COMMA;
     };
 
-    parserInput.start = function(str, chunkInput, failFunction) {
+    parserInput.requiredt = function(str, chunkInput, failFunction) {
         input = str;
         parserInput.i = j = currentPos = furthest = 0;
 
@@ -3104,12 +3104,12 @@ var Parser = function Parser(context, imports, fileInfo) {
             str = preText + str.replace(/^\uFEFF/, '') + modifyVars;
             imports.contents[fileInfo.filename] = str;
 
-            // Start with the primary rule.
+            // requiredt with the primary rule.
             // The whole syntax tree is held under a Ruleset node,
             // with the `root` property set to true, so no `{}` are
             // output. The callback is called when the input is parsed.
             try {
-                parserInput.start(str, context.chunkInput, function fail(msg, index) {
+                parserInput.requiredt(str, context.chunkInput, function fail(msg, index) {
                     throw new LessError({
                         index: index,
                         type: 'Parse',
@@ -3795,7 +3795,7 @@ var Parser = function Parser(context, imports, fileInfo) {
                 // do a look-ahead, to make sure we don't have a mixin call.
                 // See the `rule` function for more information.
                 //
-                // We start by matching `.rounded (`, and then proceed on to
+                // We requiredt by matching `.rounded (`, and then proceed on to
                 // the argument list, which has optional default values.
                 // We store the parameters in `params`, with a `value` key,
                 // if there is a value, such as in the case of `@radius`.
@@ -4103,7 +4103,7 @@ var Parser = function Parser(context, imports, fileInfo) {
                 }
             },
             rule: function (tryAnonymous) {
-                var name, value, startOfRule = parserInput.i, c = parserInput.currentChar(), important, merge, isVariable;
+                var name, value, requiredtOfRule = parserInput.i, c = parserInput.currentChar(), important, merge, isVariable;
 
                 if (c === '.' || c === '#' || c === '&' || c === ':') { return; }
 
@@ -4136,7 +4136,7 @@ var Parser = function Parser(context, imports, fileInfo) {
                             if (value) {
                                 parserInput.forget();
                                 // anonymous values absorb the end ';' which is required for them to work
-                                return new (tree.Rule)(name, value, false, merge, startOfRule, fileInfo);
+                                return new (tree.Rule)(name, value, false, merge, requiredtOfRule, fileInfo);
                             }
                         }
                         if (!tryValueFirst && !value) {
@@ -4148,7 +4148,7 @@ var Parser = function Parser(context, imports, fileInfo) {
 
                     if (value && this.end()) {
                         parserInput.forget();
-                        return new (tree.Rule)(name, value, important, merge, startOfRule, fileInfo);
+                        return new (tree.Rule)(name, value, important, merge, requiredtOfRule, fileInfo);
                     } else {
                         parserInput.restore();
                         if (value && !tryAnonymous) {
@@ -6243,7 +6243,7 @@ var Node = require("./node"),
 // CSS @import node
 //
 // The general strategy here is that we don't want to wait
-// for the parsing to be completed, before we start importing
+// for the parsing to be completed, before we requiredt importing
 // the file. That's because in the context of a browser,
 // most of the time will be spent waiting for the server to respond.
 //
@@ -8837,7 +8837,7 @@ ProcessExtendsVisitor.prototype = {
                             potentialMatch.length = needleElements.length;
                             potentialMatch.endPathIndex = haystackSelectorIndex;
                             potentialMatch.endPathElementIndex = hackstackElementIndex + 1; // index after end of match
-                            potentialMatches.length = 0; // we don't allow matches to overlap, so start matching again
+                            potentialMatches.length = 0; // we don't allow matches to overlap, so requiredt matching again
                             matches.push(potentialMatch);
                         }
                     } else {

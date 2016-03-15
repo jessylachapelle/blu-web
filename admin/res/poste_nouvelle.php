@@ -17,11 +17,11 @@ if ($_POST['titre'] != "" && $_POST['message'] != "") {
   }
 
   if ($_POST['id_nouvelle'] == 0) {
-		$requete = "INSERT INTO nouvelle (titre, message, debut, fin)
+		$query = "INSERT INTO nouvelle (titre, message, debut, fin)
 					      VALUES('$titre', '$message', '$debut', '$fin');";
     $param = "insert";
   } else {
-    $requete = "UPDATE nouvelle
+    $query = "UPDATE nouvelle
                 SET titre='$titre',
                     message='$message',
                     debut='$debut',
@@ -31,7 +31,7 @@ if ($_POST['titre'] != "" && $_POST['message'] != "") {
   }
 
   include "../../#/connection.php";
-  mysqli_query($connection, $requete)or die ("Query failed: '" . $requete . "' " . mysqli_error());
+  mysqli_query($connection, $query)or die ("Query failed: '" . $query . "' " . mysqli_error());
   mysqli_close($connection);
   return redirect($param, 'true');
 }

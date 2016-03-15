@@ -311,7 +311,7 @@ function getMembre($nodossier) {
             WHERE membre.no=$nodossier";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   $membre->setNo($row['no']);
@@ -339,7 +339,7 @@ function getTelephone($noMembre) {
   $query = "SELECT id, numero, note FROM telephone WHERE no_membre=$noMembre";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     $telephone = new Telephone();
@@ -408,7 +408,7 @@ function getExemplaires($noMembre, $typeTransaction) {
   $query .= " ORDER BY nom";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     $exemplaire = new Exemplaire();
@@ -432,7 +432,7 @@ function getArticleSuivi($noMembre) {
   $query = "SELECT id, nom FROM article WHERE id IN (SELECT no_article FROM article_suivi WHERE no_membre=$noMembre)";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     $e = new Exemplaire();
@@ -455,7 +455,7 @@ function getNombreMisEnVente($idArticle) {
             AND transaction.id_type=1";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   return $row['nombre'];
@@ -469,7 +469,7 @@ function getNombreVendu($idArticle) {
             AND (transaction.id_type=2 OR transaction.id_type=3)";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   return $row['nombre'];
@@ -486,7 +486,7 @@ function getDateTransaction($idExemplaire, $typeTransaction) {
     $query = "SELECT date FROM transaction WHERE id_exemplaire=$idExemplaire AND id_type=$typeTransaction";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   return date( 'Y-m-d', strtotime($row['date']));
@@ -501,7 +501,7 @@ function articleEstDesuet($idArticle) {
             AND propriete_valeur.id_propriete=15";
 
   include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   return $row['nombre'] != 0;

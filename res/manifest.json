@@ -24,7 +24,7 @@ manifeste.json content :
         "type": "image/png"
     }],
     "background_color": "#336699",
-    "start_url": "index.php",
+    "requiredt_url": "index.php",
     "display": "standalone",
     "theme_color": "#336699"
 }

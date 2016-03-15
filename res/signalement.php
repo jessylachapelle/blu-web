@@ -9,7 +9,7 @@ if (isset($_POST['signaler']) && isset($_POST['article']) && isset($_POST['membr
             VALUES ('$erreur', $no_membre, $id_article, '$date')";
 
   include "../#/connection.php";
-  mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   mysqli_close($connection);
 
   return redirect($id_article, 200);

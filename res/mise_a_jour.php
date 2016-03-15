@@ -49,7 +49,7 @@ function getIdVille($ville) {
   $query = "SELECT id FROM ville WHERE nom='$ville' LIMIT 1";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
     $id = $row['id'];
@@ -63,7 +63,7 @@ function insertVille($ville, $province) {
   $query = "INSERT INTO ville(nom, code_province) VALUES ('$ville', '$province')";
 
   include "../#/connection.php";
-  mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   $id = mysqli_insert_id($connection);
 
@@ -82,7 +82,7 @@ function updateMembre($membre) {
             WHERE no='" . $membre->getNo() . "'";
 
   include "../#/connection.php";
-  mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   foreach($membre->getTelephone() as $telephone) {
     setTelephone($telephone, $membre->getNo());
@@ -104,7 +104,7 @@ function setTelephone($telephone, $noMembre) {
     $query = "UPDATE telephone SET numero='" . $telephone->getNumero() . "', note='" . $telephone->getNote() . "' WHERE id='" . $telephone->getId() . "'";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 }
 
 ?>

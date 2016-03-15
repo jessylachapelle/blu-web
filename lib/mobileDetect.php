@@ -359,7 +359,7 @@ class Mobile_Detect
         // Modecom Tablets - http://www.modecom.eu/tablets/portal/
         'ModecomTablet' => 'FreeTAB 9000|FreeTAB 7.4|FreeTAB 7004|FreeTAB 7800|FreeTAB 2096|FreeTAB 7.5|FreeTAB 1014|FreeTAB 1001 |FreeTAB 8001|FreeTAB 9706|FreeTAB 9702|FreeTAB 7003|FreeTAB 7002|FreeTAB 1002|FreeTAB 7801|FreeTAB 1331|FreeTAB 1004|FreeTAB 8002|FreeTAB 8014|FreeTAB 9704|FreeTAB 1003',
         // Vonino Tablets - http://www.vonino.eu/tablets
-        'VoninoTablet'  => '\b(Argus[ _]?S|Diamond[ _]?79HD|Emerald[ _]?78E|Luna[ _]?70C|Onyx[ _]?S|Onyx[ _]?Z|Orin[ _]?HD|Orin[ _]?S|Otis[ _]?S|SpeedStar[ _]?S|Magnet[ _]?M9|Primus[ _]?94[ _]?3G|Primus[ _]?94HD|Primus[ _]?QS|Android.*\bQ8\b|Sirius[ _]?EVO[ _]?QS|Sirius[ _]?QS|Spirit[ _]?S)\b',
+        'VoninoTablet'  => '\b(Argus[ _]?S|Diamond[ _]?79HD|Emerald[ _]?78E|Luna[ _]?70C|Onyx[ _]?S|Onyx[ _]?Z|Orin[ _]?HD|Orin[ _]?S|Otis[ _]?S|Speedrequired[ _]?S|Magnet[ _]?M9|Primus[ _]?94[ _]?3G|Primus[ _]?94HD|Primus[ _]?QS|Android.*\bQ8\b|Sirius[ _]?EVO[ _]?QS|Sirius[ _]?QS|Spirit[ _]?S)\b',
         // ECS Tablets - http://www.ecs.com.tw/ECSWebSite/Product/Product_Tablet_List.aspx?CategoryID=14&MenuID=107&childid=M_107&LanID=0
         'ECSTablet'     => 'V07OT2|TM105A|S10OT1|TR10CS1',
         // Storex Tablets - http://storex.fr/espace_client/support.html
@@ -660,7 +660,7 @@ class Mobile_Detect
         $this->httpHeaders = array();
 
         //Only save HTTP headers. In PHP land, that means only _SERVER vars that
-        //start with HTTP_.
+        //requiredt with HTTP_.
         foreach ($httpHeaders as $key => $value) {
             if (substr($key,0,5) == 'HTTP_') {
                 $this->httpHeaders[$key] = $value;
@@ -956,11 +956,11 @@ class Mobile_Detect
      * @param  string                 $name
      * @param  array                  $arguments
      * @return mixed
-     * @throws BadMethodCallException when the method doesn't exist and doesn't start with 'is'
+     * @throws BadMethodCallException when the method doesn't exist and doesn't requiredt with 'is'
      */
     public function __call($name, $arguments)
     {
-        //make sure the name starts with 'is', otherwise
+        //make sure the name requiredts with 'is', otherwise
         if (substr($name, 0, 2) != 'is') {
             throw new BadMethodCallException("No such method exists: $name");
         }

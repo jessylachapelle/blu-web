@@ -1,7 +1,7 @@
 <?php
 include "../../#/connection.php";
-$requete = "DELETE FROM erreur WHERE id =" . $_GET['id_signalement'];
-$resultat = mysqli_query($connection, $requete)or die ("Query failed: '" . $requete . "' " . mysqli_error());
+$query = "DELETE FROM erreur WHERE id =" . $_GET['id_signalement'];
+$result = mysqli_query($connection, $query)or die ("Query failed: '" . $query . "' " . mysqli_error());
 
 header("Location: ../signalement.php");
 ?>

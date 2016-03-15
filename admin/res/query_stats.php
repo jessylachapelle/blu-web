@@ -52,7 +52,7 @@ function statistiquesTransaction($date, $typeTransaction) {
   }
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   $stats = [
@@ -78,7 +78,7 @@ function economieParentEtudiant($date) {
   }
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   $economie = 0;
 
@@ -124,7 +124,7 @@ function getMembreAvecRemise($compteActif) {
             ORDER BY nom, prenom, no;";
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   $membres = [];
 
@@ -157,7 +157,7 @@ function ArgentRemettreParMembre($noMembre) {
                                        AND id_type=4);";
 
    include "../../#/connection.php";
-   $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
    $row = mysqli_fetch_assoc($result);
 
    $montant = $row['montant'];
@@ -194,7 +194,7 @@ function compteBLU($actif) {
             AND transaction.no_membre IN(SELECT no FROM membre WHERE derniere_activite>='$date');";
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   $data = [
@@ -231,7 +231,7 @@ function livresValidesNonVendus() {
             AND pv.id != 5092";
 
     include "../../#/connection.php";
-    $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+    $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
     $articles = [];
 
