@@ -11,7 +11,7 @@ if(isset($_POST['search-data'])) {
             WHERE nom LIKE '%$searchData%' OR valeur LIKE '%$searchData%'";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error($connection));
+  $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
   $articles = [];
 
   while($row = mysqli_fetch_assoc($result)) {
@@ -51,7 +51,7 @@ function addProprieties($res) {
             WHERE id_article=$id AND id_propriete=6) AS auteur_5";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error($connection));
+  $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
   $row = mysqli_fetch_assoc($result);
 
   $auteur = "";
