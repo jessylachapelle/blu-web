@@ -1,21 +1,21 @@
 <?php
-  require_once 'class/membre.php';
-  require_once 'class/exemplaire.php';
+  require_once 'class/member.php';
+  require_once 'class/copy.php';
   require_once 'class/telephone.php';
 
-  $membre = getMembre($_SESSION['nodossier']);
-  $membre->setTelephone(getTelephone($membre->getNo()));
-  $suivi = getArticleSuivi($membre->getNo());
-  $aVendre = getExemplairesAVendre($membre->getNo());
-  $vendu = getExemplairesVendu($membre->getNo());
-  $argentRemis = getExemplaireArgentRemis($membre->getNo());
+  $member = getMembre($_SESSION['memberNo']);
+  $member->setTelephone(getTelephone($member->getNo()));
+  $suivi = getArticleSuivi($member->getNo());
+  $aVendre = getExemplairesAVendre($member->getNo());
+  $vendu = getExemplairesVendu($member->getNo());
+  $argentRemis = getExemplaireArgentRemis($member->getNo());
 ?>
 
 <div id='overlay'>
   <form id='coord-form' method='post'>
-    <input id='nomembre' name='nomembre' type="hidden" />
+    <input id='memberNo' name='memberNo' type="hidden" />
     <div>
-      <input id='nocivic' name='nocivic' type='text' placeholder='No civic' value='<?php echo $membre->getNoCivic() ?>' required='' />
+      <input id='nocivic' name='nocivic' type='text' placeholder='No civic' value='<?php echo $member->getNoCivic() ?>' required='' />
       <input id='rue' name='rue' type='text' placeholder='Rue' required='' />
       <input id='app' name='app' type='text' placeholder='App.' />
     </div>
@@ -56,15 +56,15 @@
 </div>
 
 <script>
-  var membre = '<?php echo json_encode((array) $membre); ?>'
-  var noMembre = '<?php echo $membre->getNo() ?>';
-  var noCivic = '<?php echo $membre->getNoCivic() ?>';
-  var rue = '<?php echo $membre->getRue() ?>';
-  var app = '<?php echo $membre->getApp() ?>';
-  var codePostal = '<?php echo $membre->getCodePostal() ?>';
-  var ville = '<?php echo $membre->getVille() ?>';
-  var province = '<?php echo $membre->getProvince() ?>';
-  var courriel = '<?php echo $membre->getCourriel() ?>';
+  var member = '<?php echo json_encode((array) $member); ?>'
+  var memberNo = '<?php echo $member->getNo() ?>';
+  var noCivic = '<?php echo $member->getNoCivic() ?>';
+  var rue = '<?php echo $member->getRue() ?>';
+  var app = '<?php echo $member->getApp() ?>';
+  var codePostal = '<?php echo $member->getCodePostal() ?>';
+  var ville = '<?php echo $member->getVille() ?>';
+  var province = '<?php echo $member->getProvince() ?>';
+  var courriel = '<?php echo $member->getCourriel() ?>';
   var idTel1 = '';
   var tel1 = '';
   var note1 = '';
@@ -74,10 +74,10 @@
 </script>
 
 <?php
-  if($membre->getTelephone() != null) {
+  if($member->getTelephone() != null) {
     $noTel = 1;
 
-    foreach($membre->getTelephone() as $telephone) {
+    foreach($member->getTelephone() as $telephone) {
       $id = $telephone->getId();
       $numero = $telephone->getNumero();
       $note = $telephone->getNote();
@@ -94,7 +94,7 @@
 
 
 <?php // ÉTAT DE COMPTE ?>
-<h1>Bonjour <?php echo $membre->getPrenom() . " " . $membre->getNom(); ?>
+<h1>Bonjour <?php echo $member->getPrenom() . " " . $member->getNom(); ?>
   <a href='res/logout.php'>
     <span class='oi' data-glyph='account-logout'></span>
   </a>
@@ -104,15 +104,15 @@
     <table id='infocompte'>
       <tr>
         <td>Date d'inscription :</td>
-        <td><?php echo $membre->getInscription(); ?></td>
+        <td><?php echo $member->getInscription(); ?></td>
       </tr>
       <tr>
         <td>Date de dernière activité :</td>
-        <td><?php echo $membre->getDerniereActivite(); ?></td>
+        <td><?php echo $member->getDerniereActivite(); ?></td>
       </tr>
       <tr>
         <td>Date de désactivation :</td>
-        <td><?php echo $membre->getDateDesactivation(); ?></td>
+        <td><?php echo $member->getDateDesactivation(); ?></td>
       </tr>
     </table>
 
@@ -125,15 +125,15 @@ else
 // COORDONNÉES
 $htmlStr = "<section class='inline'>
               <p><b>Coordonnées :</b></p>
-              <p>" . $membre->getNoCivic() . ", " . $membre->getRue();
+              <p>" . $member->getNoCivic() . ", " . $member->getRue();
 
-if($membre->getApp() != null)
-  $htmlStr .= " app. " . $membre->getApp();
+if($member->getApp() != null)
+  $htmlStr .= " app. " . $member->getApp();
 
-$htmlStr .= ",<br/>" . $membre->getVille() . ", " . $membre->getProvince() . ",<br/>" . $membre->getCodePostal() . "<br/>";
+$htmlStr .= ",<br/>" . $member->getVille() . ", " . $member->getProvince() . ",<br/>" . $member->getCodePostal() . "<br/>";
 
-if($membre->getTelephone() != null) {
-  foreach($membre->getTelephone() as $telephone) {
+if($member->getTelephone() != null) {
+  foreach($member->getTelephone() as $telephone) {
     $htmlStr .= $telephone->getNumero();
 
     if($telephone->getNote() != null)
@@ -142,7 +142,7 @@ if($membre->getTelephone() != null) {
   }
 }
 
-$htmlStr .= $membre->getCourriel() . "</p>
+$htmlStr .= $member->getCourriel() . "</p>
             <button onclick='miseAJourCompte()'>Mettre à jour</button></section>";
 
 // ARTICLE SUIVI
@@ -152,13 +152,13 @@ $htmlTableStr = "";
 foreach($suivi AS $e) {
   $nbArticle++;
 
-  if($e->getPrix() > 0)
+  if($e->getPrice() > 0)
     $htmlTableStr .= "<tr class='enstock' data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
   else
     $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
 
-  $htmlTableStr .= "<td>" . $e->getTitre() . "</td>
-                    <td>" . $e->getPrix() . "</td>
+  $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
+                    <td>" . $e->getPrice() . "</td>
                     </tr></div>";
 }
 
@@ -186,16 +186,16 @@ $montant = 0;
 $htmlTableStr = "";
 foreach($aVendre as $e) {
   $nbArticle++;
-  $montant += $e->getPrix();
+  $montant += $e->getPrice();
 
   if(articleEstDesuet($e->getArticle()))
     $htmlTableStr .= "<tr class='desuet' data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
   else
     $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
 
-  $htmlTableStr .= "<td>" . $e->getTitre() . "</td>
-                    <td>" . $e->getDateAjout() . "</td>
-                    <td>" . $e->getPrix() . " $</td>
+  $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
+                    <td>" . $e->getDateAdded() . "</td>
+                    <td>" . $e->getPrice() . " $</td>
                     </tr>";
 }
 
@@ -225,12 +225,12 @@ $htmlTableStr = "";
 
 foreach($vendu as $e) {
   $nbArticle++;
-  $montant += $e->getPrix();
+  $montant += $e->getPrice();
   $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>
-                      <td>" . $e->getTitre() . "</td>
-                      <td>" . $e->getDateAjout() . "</td>
-                      <td>" . $e->getDateVente() . "</td>
-                      <td>" . $e->getPrix() . " $</td>
+                      <td>" . $e->getTitle() . "</td>
+                      <td>" . $e->getDateAdded() . "</td>
+                      <td>" . $e->getDateSold() . "</td>
+                      <td>" . $e->getPrice() . " $</td>
                     </tr>";
 }
 
@@ -261,14 +261,14 @@ $htmlTableStr = "";
 
 foreach($argentRemis as $e) {
   $nbArticle++;
-  $montant += $e->getPrix();
+  $montant += $e->getPrice();
 
   $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>
-                      <td>" . $e->getTitre() . "</td>
-                      <td>" . $e->getDateAjout() . "</td>
-                      <td>" . $e->getDateVente() . "</td>
-                      <td>" . $e->getDateArgentRemis() . "</td>
-                      <td>" . $e->getPrix() . " $</td>
+                      <td>" . $e->getTitle() . "</td>
+                      <td>" . $e->getDateAdded() . "</td>
+                      <td>" . $e->getDateSold() . "</td>
+                      <td>" . $e->getDatePaid() . "</td>
+                      <td>" . $e->getPrice() . " $</td>
                     </tr>";
 }
 
@@ -303,7 +303,7 @@ echo $htmlStr;
 
 <?php
 function getMembre($nodossier) {
-  $membre = new Membre();
+  $member = new Membre();
 
   $query = "SELECT membre.*, ville.nom AS ville, province.nom AS province FROM membre
             INNER JOIN ville ON membre.id_ville=ville.id
@@ -314,29 +314,29 @@ function getMembre($nodossier) {
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
-  $membre->setNo($row['no']);
-  $membre->setPrenom($row['prenom']);
-  $membre->setNom($row['nom']);
-  $membre->setInscription(date('Y-m-d', strtotime($row['inscription'])));
-  $membre->setDerniereActivite(date('Y-m-d', strtotime($row['derniere_activite'])));
-  $membre->setNoCivic($row['no_civic']);
-  $membre->setRue($row['rue']);
-  $membre->setApp($row['app']);
-  $membre->setVille($row['ville']);
-  $membre->setProvince($row['province']);
-  $membre->setCodePostal($row['code_postal']);
-  $membre->setCourriel($row['courriel']);
+  $member->setNo($row['no']);
+  $member->setPrenom($row['prenom']);
+  $member->setNom($row['nom']);
+  $member->setInscription(date('Y-m-d', strtotime($row['inscription'])));
+  $member->setDerniereActivite(date('Y-m-d', strtotime($row['derniere_activite'])));
+  $member->setNoCivic($row['no_civic']);
+  $member->setRue($row['rue']);
+  $member->setApp($row['app']);
+  $member->setVille($row['ville']);
+  $member->setProvince($row['province']);
+  $member->setCodePostal($row['code_postal']);
+  $member->setCourriel($row['courriel']);
 
-  $membre->setCodePostal(substr($membre->getCodePostal(), 0, 3) . " " . substr($membre->getCodePostal(), 3, 3));
+  $member->setCodePostal(substr($member->getCodePostal(), 0, 3) . " " . substr($member->getCodePostal(), 3, 3));
 
   mysqli_close($connection);
-  return $membre;
+  return $member;
 }
 
-function getTelephone($noMembre) {
+function getTelephone($memberNo) {
   $telephones = array();
 
-  $query = "SELECT id, numero, note FROM telephone WHERE no_membre=$noMembre";
+  $query = "SELECT id, numero, note FROM telephone WHERE no_membre=$memberNo";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
@@ -357,31 +357,31 @@ function getTelephone($noMembre) {
   return $telephones;
 }
 
-function getExemplairesAVendre($noMembre) {
-  return getExemplaires($noMembre, 1);
+function getExemplairesAVendre($memberNo) {
+  return getExemplaires($memberNo, 1);
 }
 
-function getExemplairesVendu($noMembre) {
-  $exemplaires = getExemplaires($noMembre, 2);
+function getExemplairesVendu($memberNo) {
+  $copys = getExemplaires($memberNo, 2);
 
-  foreach($exemplaires as $e)
-    $e->setDateAjout(getDateTransaction($e->getId(), 1));
-  return $exemplaires;
+  foreach($copys as $e)
+    $e->setDateAdded(getDateTransaction($e->getId(), 1));
+  return $copys;
 }
 
-function getExemplaireArgentRemis($noMembre) {
-  $exemplaires = getExemplaires($noMembre, 4);
+function getExemplaireArgentRemis($memberNo) {
+  $copys = getExemplaires($memberNo, 4);
 
-  foreach($exemplaires as $e) {
-    $e->setDateAjout(getDateTransaction($e->getId(), 1));
-    $e->setDateVente(getDateTransaction($e->getId(), 2));
+  foreach($copys as $e) {
+    $e->setDateAdded(getDateTransaction($e->getId(), 1));
+    $e->setDateSold(getDateTransaction($e->getId(), 2));
   }
 
-  return $exemplaires;
+  return $copys;
 }
 
-function getExemplaires($noMembre, $typeTransaction) {
-  $exemplaires = Array();
+function getExemplaires($memberNo, $typeTransaction) {
+  $copys = Array();
 
   $query = "SELECT exemplaire.id AS id,
                    article.id AS article,
@@ -393,7 +393,7 @@ function getExemplaires($noMembre, $typeTransaction) {
               ON transaction.id_exemplaire=exemplaire.id
             INNER JOIN article
               ON exemplaire.id_article=article.id
-            WHERE no_membre=$noMembre";
+            WHERE no_membre=$memberNo";
 
   if($typeTransaction == 2 || $typeTransaction == 3)
     $query .= " AND (id_type=2 OR id_type=3)";
@@ -401,9 +401,9 @@ function getExemplaires($noMembre, $typeTransaction) {
     $query .= " AND id_type=$typeTransaction";
 
   if($typeTransaction == 1)
-    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$noMembre AND (id_type=2 OR id_type=3))";
+    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$memberNo AND (id_type=2 OR id_type=3))";
   elseif($typeTransaction == 2 || $typeTransaction == 3)
-    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$noMembre AND id_type=4)";
+    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$memberNo AND id_type=4)";
 
   $query .= " ORDER BY nom";
 
@@ -411,25 +411,25 @@ function getExemplaires($noMembre, $typeTransaction) {
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
-    $exemplaire = new Exemplaire();
+    $copy = new Exemplaire();
 
-    $exemplaire->setId($row['id']);
-    $exemplaire->setArticle($row['article']);
-    $exemplaire->setTitre($row['nom']);
-    $exemplaire->setDate(date( 'Y-m-d', strtotime($row['date'])), $typeTransaction);
-    $exemplaire->setPrix($row['prix']);
+    $copy->setId($row['id']);
+    $copy->setArticle($row['article']);
+    $copy->setTitle($row['nom']);
+    $copy->setDate(date( 'Y-m-d', strtotime($row['date'])), $typeTransaction);
+    $copy->setPrice($row['prix']);
 
-    array_push($exemplaires, $exemplaire);
+    array_push($copys, $copy);
   }
 
   mysqli_close($connection);
-  return $exemplaires;
+  return $copys;
 }
 
-function getArticleSuivi($noMembre) {
+function getArticleSuivi($memberNo) {
   $articles = array();
 
-  $query = "SELECT id, nom FROM article WHERE id IN (SELECT no_article FROM article_suivi WHERE no_membre=$noMembre)";
+  $query = "SELECT id, nom FROM article WHERE id IN (SELECT no_article FROM article_suivi WHERE no_membre=$memberNo)";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
@@ -438,8 +438,8 @@ function getArticleSuivi($noMembre) {
     $e = new Exemplaire();
 
     $e->setArticle($row['id']);
-    $e->setTitre($row['nom']);
-    $e->setPrix(getNombreEnVente($e->getArticle()));
+    $e->setTitle($row['nom']);
+    $e->setPrice(getNombreEnVente($e->getArticle()));
 
     array_push($articles, $e);
   }

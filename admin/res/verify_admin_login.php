@@ -13,7 +13,7 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
     $_SESSION['user'] = $row['user'];
     $_SESSION['expire'] = null;
 
-    if(!isset($_POST['connexion'])) {
+    if(!isset($_POST['connection'])) {
       $_SESSION['requiredt'] = time();
       $_SESSION['expire'] = $_SESSION['requiredt'] + (1800);
     }

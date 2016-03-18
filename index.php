@@ -8,7 +8,7 @@
 		<?php include "inc/header.php"; ?>
 		<main>
 			<?php
-      if (isset($_SESSION['courriel']) && isset($_SESSION['nodossier']) &&
+      if (isset($_SESSION['email']) && isset($_SESSION['memberNo']) &&
 					($_SESSION['expire'] == null || time() < $_SESSION['expire'])) {
 				include 'view/ui_member.php';
 			} else {

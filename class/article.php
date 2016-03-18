@@ -1,23 +1,23 @@
 <?php
 /**
-* 
+*
 */
 class Article {
   private $_id;
-  private $_titre;
-  private $_auteur;
+  private $_title;
+  private $_author;
   private $_edition;
-  private $_annee;
-  private $_editeur;
+  private $_year;
+  private $_editor;
   private $_code;
 
   public function __construct() {
     $this->_id = null;
-    $this->_titre = null;
-    $this->_auteur = null;
+    $this->_title = null;
+    $this->_author = null;
     $this->_edition = null;
-    $this->_annee = null;
-    $this->_editeur = null;
+    $this->_year = null;
+    $this->_editor = null;
     $this->_code = null;
   }
 
@@ -29,20 +29,20 @@ class Article {
   	$this->_id = $id;
   }
 
-  public function getTitre(){
-  	return $this->_titre;
+  public function getTitle(){
+  	return $this->_title;
   }
 
-  public function setTitre($titre){
-  	$this->_titre = $titre;
+  public function setTitle($title){
+  	$this->_title = $title;
   }
 
-  public function getAuteur(){
-  	return $this->_auteur;
+  public function getAuthor(){
+  	return $this->_author;
   }
 
-  public function setAuteur($auteur){
-  	$this->_auteur = $auteur;
+  public function setAuthor($author){
+  	$this->_author = $author;
   }
 
   public function getEdition(){
@@ -53,20 +53,20 @@ class Article {
   	$this->_edition = $edition;
   }
 
-  public function getAnnee(){
-  	return $this->_annee;
+  public function getYear(){
+  	return $this->_year;
   }
 
-  public function setAnnee($annee){
-  	$this->_annee = $annee;
+  public function setYear($year){
+  	$this->_year = $year;
   }
 
-  public function getEditeur(){
-  	return $this->_editeur;
+  public function getEditor(){
+  	return $this->_editor;
   }
 
-  public function setEditeur($editeur){
-  	$this->_editeur = $editeur;
+  public function setEditor($editor){
+  	$this->_editor = $editor;
   }
 
   public function getCode(){
@@ -77,5 +77,4 @@ class Article {
   	$this->_code = $code;
   }
 }
-
 ?>

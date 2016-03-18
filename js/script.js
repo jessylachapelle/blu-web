@@ -44,7 +44,7 @@ function ouvrirArticle(e) {
 }
 
 function miseAJourCompte() {
-  document.getElementById('nomembre').value = noMembre;
+  document.getElementById('memberNo').value = memberNo;
   document.getElementById('nocivic').value = noCivic;
   document.getElementById('rue').value = rue;
   document.getElementById('app').value = app;
@@ -214,15 +214,15 @@ function displayResults(filtre) {
 	sortTables();
 }
 
-function desabonnement(e) {
+function unsubscribe(e) {
 	var xmlhttp = new getXMLHttpRequest();
 	var formData = new FormData();
 
 	var row = e.parentNode.parentNode;
 	var tbody = row.parentNode;
 
-	formData.append('f', 'desabonnement');
-	formData.append('noMembre', noMembre);
+	formData.append('f', 'unsubscribe');
+	formData.append('memberNo', memberNo);
 	formData.append('idArticle', e.getAttribute('data-article'));
 
 	xmlhttp.onreadystatechange = function(res) {
@@ -233,40 +233,40 @@ function desabonnement(e) {
 		}
 	};
 
-	xmlhttp.open('POST', 'res/abonnement_article.php', true);
+	xmlhttp.open('POST', 'res/article_subscription.php', true);
 	xmlhttp.send(formData);
 }
 
-function abonnement(e) {
+function subscribe(e) {
 	var xmlhttp = new getXMLHttpRequest();
 	var formData = new FormData();
 
-	formData.append('noMembre', noMembre);
+	formData.append('memberNo', memberNo);
 	formData.append('idArticle', e.getAttribute('data-article'));
 
-	if (e.getAttribute('data-state') === 'abonne') {
-		formData.append('f', 'desabonnement');
+	if (e.getAttribute('data-state') === 'subscribed') {
+		formData.append('f', 'unsubscribe');
 
 		xmlhttp.onreadystatechange = function(res) {
 			if (xmlhttp.readyState==4) {
 				if (xmlhttp.responseText) {
-					e.setAttribute('data-state', 'desabonne');
+					e.setAttribute('data-state', 'unsubscribed');
 				}
 			}
 		};
 	} else {
-		formData.append('f', 'abonnement');
+		formData.append('f', 'subscribe');
 
 		xmlhttp.onreadystatechange = function(res) {
 			if (xmlhttp.readyState==4) {
 				if (xmlhttp.responseText) {
-					e.setAttribute('data-state', 'abonne');
+					e.setAttribute('data-state', 'subscribed');
 				}
 			}
 		};
 	}
 
-	xmlhttp.open('POST', 'res/abonnement_article.php', true);
+	xmlhttp.open('POST', 'res/article_subscription.php', true);
 	xmlhttp.send(formData);
 }
 
@@ -334,7 +334,7 @@ function verifyCoordonates(event) {
 	var xmlhttp = new getXMLHttpRequest();
 	var formData = new FormData();
 
-  formData.append('nomembre', event.target.nomembre.value);
+  formData.append('memberNo', event.target.memberNo.value);
   formData.append('nocivic', inputNoCivic.value);
   formData.append('codepostal', inputCodePostal.value.replace(' ', ''));
   formData.append('telephone1', inputTel1.value.replace('-', '').replace('(', '').replace(' ', '').replace('.', ''));

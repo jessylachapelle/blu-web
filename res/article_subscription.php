@@ -1,16 +1,16 @@
 <?php
 if (isset($_POST['f'])) {
   switch ($_POST['f']) {
-    case "abonnement":
-      echo abonnement($_POST['noMembre'], $_POST['idArticle']);
+    case "subscribe":
+      echo subscribe($_POST['memberNo'], $_POST['idArticle']);
       break;
-    case "desabonnement":
-      echo desabonnement($_POST['noMembre'], $_POST['idArticle']);
+    case "unsubscribe":
+      echo unsubscribe($_POST['memberNo'], $_POST['idArticle']);
       break;
   }
 }
 
-function abonnement($memberNo, $articleId) {
+function subscribe($memberNo, $articleId) {
   $query = "INSERT INTO article_suivi(no_membre, no_article) VALUES ($memberNo, $articleId);";
 
   include "../#/connection.php";
@@ -19,7 +19,7 @@ function abonnement($memberNo, $articleId) {
   return true;
 }
 
-function desabonnement($memberNo, $articleId) {
+function unsubscribe($memberNo, $articleId) {
   $query = "DELETE FROM article_suivi WHERE no_membre=$memberNo AND no_article=$articleId;";
 
   include "../#/connection.php";

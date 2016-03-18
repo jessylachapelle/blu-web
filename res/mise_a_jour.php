@@ -1,8 +1,8 @@
 <?php
-require_once "../class/membre.php";
+require_once "../class/member.php";
 require_once "../class/telephone.php";
 
-$membre = new Membre();
+$member = new Membre();
 $telephones = array();
 $ville = str_replace("'", "''", $_POST['ville']);
 $province = $_POST['province'];
@@ -28,16 +28,16 @@ if($_POST['telephone2'] != "") {
   array_push($telephones, $tel2);
 }
 
-$membre->setNo($_POST['nomembre']);
-$membre->setNoCivic($_POST['nocivic']);
-$membre->setRue($rue = str_replace("'", "''", $_POST['rue']));
-$membre->setApp(str_replace("'", "''", $_POST['app']));
-$membre->setCodePostal(str_replace(" ", "", $_POST['codepostal']));
-$membre->setVille($villeId);
-$membre->setTelephone($telephones);
-$membre->setCourriel($_POST['courriel']);
+$member->setNo($_POST['memberNo']);
+$member->setNoCivic($_POST['nocivic']);
+$member->setRue($rue = str_replace("'", "''", $_POST['rue']));
+$member->setApp(str_replace("'", "''", $_POST['app']));
+$member->setCodePostal(str_replace(" ", "", $_POST['codepostal']));
+$member->setVille($villeId);
+$member->setTelephone($telephones);
+$member->setCourriel($_POST['courriel']);
 
-echo updateMembre($membre);
+echo updateMembre($member);
 ?>
 
 
@@ -71,21 +71,21 @@ function insertVille($ville, $province) {
   echo $id;
 }
 
-function updateMembre($membre) {
+function updateMembre($member) {
   $query = "UPDATE membre
-            SET courriel='" . $membre->getCourriel() ."',
-                no_civic='" . $membre->getNoCivic() . "',
-                rue='" . $membre->getRue() . "',
-                app='" . $membre->getApp() . "',
-                code_postal='" . $membre->getCodePostal() . "',
-                id_ville='" . $membre->getVille() . "'
-            WHERE no='" . $membre->getNo() . "'";
+            SET courriel='" . $member->getCourriel() ."',
+                no_civic='" . $member->getNoCivic() . "',
+                rue='" . $member->getRue() . "',
+                app='" . $member->getApp() . "',
+                code_postal='" . $member->getCodePostal() . "',
+                id_ville='" . $member->getVille() . "'
+            WHERE no='" . $member->getNo() . "'";
 
   include "../#/connection.php";
   mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
-  foreach($membre->getTelephone() as $telephone) {
-    setTelephone($telephone, $membre->getNo());
+  foreach($member->getTelephone() as $telephone) {
+    setTelephone($telephone, $member->getNo());
   }
   
   mysqli_close($connection);
@@ -93,13 +93,13 @@ function updateMembre($membre) {
   return true;
 }
 
-function setTelephone($telephone, $noMembre) {
+function setTelephone($telephone, $memberNo) {
   $query = "";
 
   if($telephone->getId() != "" && $telephone->getId() != 0 && $telephone->getNumero() == "")
     $query = "DELETE FROM telephone WHERE id='" . $telephone->getId() . "'";
   elseif($telephone->getId() == 0 || $telephone->getId() == "")
-    $query = "INSERT INTO telephone(no_membre, numero, note) VALUES ('$noMembre', '" . $telephone->getNumero() . "', '" . $telephone->getNote() . "')";
+    $query = "INSERT INTO telephone(no_membre, numero, note) VALUES ('$memberNo', '" . $telephone->getNumero() . "', '" . $telephone->getNote() . "')";
   else
     $query = "UPDATE telephone SET numero='" . $telephone->getNumero() . "', note='" . $telephone->getNote() . "' WHERE id='" . $telephone->getId() . "'";
 
