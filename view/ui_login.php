@@ -8,7 +8,7 @@
 	<input id="email" name="email" type="text" required="" />
 
 	<label for="memberNo">Numéro de dossier<span class="required">*</span> :</label>
-  
+
 	<input id="memberNo" name="memberNo" type="password" required="" />
   <div class="checkbox-container">
     <input id="connection"
@@ -18,5 +18,5 @@
            <?php if($device->isMobile()) { echo "checked='checked'"; } ?> />
     <label for="connection">Garder ma session active</label>
   </div>
-  <button id="connection">Connexion</button>
+  <button>Connexion</button>
 </form>

@@ -11,13 +11,13 @@ $device = new Mobile_Detect;
 
 if($device->isTablet()) {
   include  "inc/mhead.php";
-  echo "<link rel='stylesheet/less' href='css/mobile.less' media='(orientation : portrait)' charset='utf-8' />
-        <link rel='stylesheet/less' href='css/desktop.less' media='(orientation : landscape)' charset='utf-8' />";
+  echo "<link rel='stylesheet/less' href='css/mobile.less' media='(orientation : portrait)' />
+        <link rel='stylesheet/less' href='css/desktop.less' media='(orientation : landscape)' />";
 } elseif($device->isMobile()) {
   include  "inc/mhead.php";
-  echo "<link rel='stylesheet/less' href='css/mobile.less' charset='utf-8' />";
+  echo "<link rel='stylesheet/less' href='css/mobile.less' />";
 } else
-  echo "<link rel='stylesheet/less' href='css/desktop.less' charset='utf-8' />";
+  echo "<link rel='stylesheet/less' href='css/desktop.less' />";
 ?>
 <script src="js/jquery.js"></script>
 <script src="js/slideout.js"></script>
