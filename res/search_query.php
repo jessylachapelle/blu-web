@@ -2,7 +2,7 @@
 if(isset($_POST['search-data'])) {
   $searchData = $_POST['search-data'];
 
-  $query = "SELECT article.id, article.nom
+  $query = "SELECT article.id, article.nom AS name
             FROM article
             INNER JOIN propriete_article
               ON article.id=propriete_article.id_article
@@ -28,45 +28,46 @@ function addProprieties($res) {
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=9) AS editeur,
+            WHERE id_article=$id AND id_propriete=9) AS editor,
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=2) AS auteur_1,
+            WHERE id_article=$id AND id_propriete=2) AS author_1,
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=3) AS auteur_2,
+            WHERE id_article=$id AND id_propriete=3) AS author_2,
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=4) AS auteur_3,
+            WHERE id_article=$id AND id_propriete=4) AS author_3,
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=5) AS auteur_4,
+            WHERE id_article=$id AND id_propriete=5) AS author_4,
             (SELECT valeur FROM propriete_valeur
             INNER JOIN propriete_article
               ON propriete_valeur.id=propriete_article.id_propriete_valeur
-            WHERE id_article=$id AND id_propriete=6) AS auteur_5";
+            WHERE id_article=$id AND id_propriete=6) AS author_5";
 
   include "../#/connection.php";
   $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
-  $auteur = "";
+  $author = "";
 
   for($i = 1; $i <= 5; $i++) {
-    if($row['auteur_' . $i] != null) {
-      $auteur .= $row['auteur_' . $i] . "; ";
+    if($row['author_' . $i] != null) {
+      $author .= $row['author_' . $i] . "; ";
     }
   }
 
   return [
     "id" => $res['id'],
-    "name" => $res['nom'],
-    "author" => $auteur,
-    "editor" => $row['editeur']
+    "name" => $res['name'],
+    "author" => $author,
+    "editor" => $row['editor']
   ];
 }
 ?>

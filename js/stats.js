@@ -371,7 +371,7 @@ function livresValidesNonVendus() {
       var category = document.createElement('td');
 
       tr.setAttribute("data-article", article.id);
-      tr.setAttribute("onclick", "ouvrirArticle(this)");
+      tr.setAttribute("onclick", "openArticle(this)");
 
       title.appendChild(document.createTextNode(article.title));
       category.appendChild(document.createTextNode(article.category));

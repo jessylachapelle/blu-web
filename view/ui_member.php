@@ -120,7 +120,7 @@
 if(isset($_GET['renouvele']) && $_GET['renouvele'] == true)
   echo "<button id='btnrenouv' class='desactive' disabled=''>Compte renouvelé</button>";
 else
-  echo "<form class='nostyle' action='res/renouvele.php'><button id='btnrenouv'>Renouveler le compte</button></form></section>";
+  echo "<form class='nostyle' action='res/renew_account.php'><button id='btnrenouv'>Renouveler le compte</button></form></section>";
 
 // COORDONNÉES
 $htmlStr = "<section class='inline'>
@@ -153,9 +153,9 @@ foreach($suivi AS $e) {
   $nbArticle++;
 
   if($e->getPrice() > 0)
-    $htmlTableStr .= "<tr class='enstock' data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
+    $htmlTableStr .= "<tr class='enstock' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
   else
-    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
+    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
 
   $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
                     <td>" . $e->getPrice() . "</td>
@@ -189,9 +189,9 @@ foreach($aVendre as $e) {
   $montant += $e->getPrice();
 
   if(articleEstDesuet($e->getArticle()))
-    $htmlTableStr .= "<tr class='desuet' data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
+    $htmlTableStr .= "<tr class='desuet' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
   else
-    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>";
+    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
 
   $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
                     <td>" . $e->getDateAdded() . "</td>
@@ -226,7 +226,7 @@ $htmlTableStr = "";
 foreach($vendu as $e) {
   $nbArticle++;
   $montant += $e->getPrice();
-  $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>
+  $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>
                       <td>" . $e->getTitle() . "</td>
                       <td>" . $e->getDateAdded() . "</td>
                       <td>" . $e->getDateSold() . "</td>
@@ -263,7 +263,7 @@ foreach($argentRemis as $e) {
   $nbArticle++;
   $montant += $e->getPrice();
 
-  $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='ouvrirArticle(this)'>
+  $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>
                       <td>" . $e->getTitle() . "</td>
                       <td>" . $e->getDateAdded() . "</td>
                       <td>" . $e->getDateSold() . "</td>

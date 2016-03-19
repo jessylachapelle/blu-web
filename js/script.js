@@ -12,9 +12,6 @@ function getXMLHttpRequest() {
 		} else {
 			xmlhttp = new XMLHttpRequest();
 		}
-	} else {
-		alert("Votre navigateur ne supporte pas l'objet XMLHTTPRequest...");
-		return null;
 	}
 	return xmlhttp;
 }
@@ -39,7 +36,7 @@ function getParameterByName(name, url) {
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function ouvrirArticle(e) {
+function openArticle(e) {
   document.location.href = 'article.php?article=' + e.getAttribute('data-article');
 }
 
@@ -192,7 +189,7 @@ function displayResults(filtre) {
 
 		var tr = document.createElement('tr');
 		tr.setAttribute("data-article", article.id);
-		tr.setAttribute("onclick", "ouvrirArticle(this)");
+		tr.setAttribute("onclick", "openArticle(this)");
 
 		var name = document.createElement('td');
 		var author = document.createElement('td');
@@ -223,7 +220,7 @@ function unsubscribe(e) {
 
 	formData.append('f', 'unsubscribe');
 	formData.append('memberNo', memberNo);
-	formData.append('idArticle', e.getAttribute('data-article'));
+	formData.append('articleId', e.getAttribute('data-article'));
 
 	xmlhttp.onreadystatechange = function(res) {
 		if (xmlhttp.readyState==4) {
@@ -242,7 +239,7 @@ function subscribe(e) {
 	var formData = new FormData();
 
 	formData.append('memberNo', memberNo);
-	formData.append('idArticle', e.getAttribute('data-article'));
+	formData.append('articleId', e.getAttribute('data-article'));
 
 	if (e.getAttribute('data-state') === 'subscribed') {
 		formData.append('f', 'unsubscribe');
@@ -361,6 +358,7 @@ function verifyCoordonates(event) {
 
 function eventHandlers() {
 	window.addEventListener('scroll', deleteTooltip);
+
 	document.getElementById('search').addEventListener('search', function(event) {
 		document.location.href = 'recherche.php?r=' + event.target.value;
 	});
@@ -403,7 +401,9 @@ var r = getParameterByName('r');
 slideoutMenu();
 eventHandlers();
 
-if(r) {
+if(r && document.getElementById('recherche') &&
+		document.getElementById('btn-recherche')) {
+			
 	document.getElementById('recherche').value = r;
 	document.getElementById('btn-recherche').click();
 }

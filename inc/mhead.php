@@ -6,8 +6,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="application-name" content="BLU">
 <link rel="fluid-icon" type="image/png" href="img/touch/chrome-touch-icon-192x192.png">
-<meta property="og:image" content="http://jessylachapelle.no-ip.biz/img/touch/chrome-touch-icon-192x192.png">
-<meta name="twitter:image" content="http://jessylachapelle.no-ip.biz/img/touch/chrome-touch-icon-192x192.png">
+<meta property="og:image" content="img/touch/chrome-touch-icon-192x192.png">
+<meta name="twitter:image" content="img/touch/chrome-touch-icon-192x192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#336699">
 <meta name="apple-mobile-web-app-title" content="BLU">

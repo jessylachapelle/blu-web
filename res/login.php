@@ -1,5 +1,6 @@
 <?php
-if (isset($_POST['email']) && isset($_POST['memberNo']) && (strlen($_POST['memberNo']) == 7 || strlen($_POST['memberNo']) == 9)) {
+if (isset($_POST['email']) && isset($_POST['memberNo']) &&
+    (strlen($_POST['memberNo']) == 7 || strlen($_POST['memberNo']) == 9)) {
   $memberNo = $_POST['memberNo'];
   $email = $_POST['email'];
 
@@ -10,21 +11,20 @@ if (isset($_POST['email']) && isset($_POST['memberNo']) && (strlen($_POST['membe
 
   include "../#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  $row = mysqli_fetch_assoc($result);
 
-  while($row = mysqli_fetch_assoc($result)) {
-    if($_POST['email'] == $row['email']) {
-      session_start ();
+  if($row['no']) {
+    session_start ();
 
-  		$_SESSION['email'] = $row['email'];
-  		$_SESSION['memberNo'] = $row['no'];
-  		$_SESSION['expire'] = null;
+		$_SESSION['email'] = $row['email'];
+		$_SESSION['memberNo'] = $row['no'];
+		$_SESSION['expire'] = null;
 
-  		if(!isset($_POST['connection'])) {
-    		$_SESSION['start'] = time();
-        $_SESSION['expire'] = $_SESSION['start'] + (1800);
-  		}
-      return redirect(200);
-    }
+		if(!isset($_POST['connection'])) {
+  		$_SESSION['start'] = time();
+      $_SESSION['expire'] = $_SESSION['start'] + 1800;
+		}
+    return redirect(200);
   }
 }
 return redirect(401);

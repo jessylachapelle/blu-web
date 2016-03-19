@@ -12,16 +12,16 @@ if (isset($_POST['signal']) && isset($_POST['article']) && isset($_POST['memberN
   mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   mysqli_close($connection);
 
-  return redirect($id_article, 200);
+  return redirect($articleId, 200);
 }
 
 return redirect($_POST['article'], 403);
 
-function redirect($article, $code) {
+function redirect($articleId, $code) {
   if ($code == 200) {
-    header("Location: ../article.php?article=$article&signaled=true");
+    header("Location: ../article.php?article=$articleId&signaled=true");
   } else {
-    header("Location: ../article.php?article=$article&error=$code");
+    header("Location: ../article.php?article=$articleId&error=$code");
   }
 }
 ?>
