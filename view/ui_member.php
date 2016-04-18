@@ -189,7 +189,7 @@ foreach($aVendre as $e) {
   $montant += $e->getPrice();
 
   if(articleEstDesuet($e->getArticle()))
-    $htmlTableStr .= "<tr class='desuet' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
+    $htmlTableStr .= "<tr class='outdated' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
   else
     $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
 

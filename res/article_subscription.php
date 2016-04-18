@@ -2,10 +2,10 @@
 if (isset($_POST['f'])) {
   switch ($_POST['f']) {
     case "subscribe":
-      echo subscribe($_POST['memberNo'], $_POST['idArticle']);
+      echo subscribe($_POST['memberNo'], $_POST['articleId']);
       break;
     case "unsubscribe":
-      echo unsubscribe($_POST['memberNo'], $_POST['idArticle']);
+      echo unsubscribe($_POST['memberNo'], $_POST['articleId']);
       break;
   }
 }
