@@ -28,20 +28,20 @@
 
     <?php
     include "../#/connection.php";
-    $requete = 'SELECT * FROM nouvelle ORDER BY id DESC;';
-    $resultat = mysqli_query($connection, $requete)or die ("Query failed: '" . $requete . "' " . mysqli_error());;
+    $query = 'SELECT * FROM nouvelle ORDER BY id DESC;';
+    $result = mysqli_query($connection, $query)or die ("Query failed: '" . $query . "' " . mysqli_error());;
 
       for ($i=0; $i<5; $i++)
       {
-        if($donnees = mysqli_fetch_array($resultat))
+        if($row = mysqli_fetch_array($result))
         {
     ?>
-    <tr id="nouvelle_<?php echo $donnees['id'] ?>">
-      <td onclick="modifier_nouvelle(<?php echo $donnees['id']?>)"><?php echo $donnees['titre']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $donnees['id']?>)"><?php echo $donnees['message']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $donnees['id']?>)"><?php echo $donnees['debut']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $donnees['id']?>)"><?php if ($donnees['fin'] != "0000-00-00") echo $donnees['fin']; ?></td>
-      <td><?php echo '<a href="res/delete_nouvelle.php?id_nouvelle=' . $donnees['id'] . '">'; ?><span class="oi" data-glyph="trash"></span></a></td>
+    <tr id="nouvelle_<?php echo $row['id'] ?>">
+      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['titre']; ?></td>
+      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['message']; ?></td>
+      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['debut']; ?></td>
+      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php if ($row['fin'] != "0000-00-00") echo $row['fin']; ?></td>
+      <td><?php echo '<a href="res/delete_nouvelle.php?id_nouvelle=' . $row['id'] . '">'; ?><span class="oi" data-glyph="trash"></span></a></td>
     </tr>
     <?php
        }

@@ -12,9 +12,6 @@ function getXMLHttpRequest() {
 		} else {
 			xmlhttp = new XMLHttpRequest();
 		}
-	} else {
-		alert("Votre navigateur ne supporte pas l'objet XMLHTTPRequest...");
-		return null;
 	}
 	return xmlhttp;
 }
@@ -39,12 +36,12 @@ function getParameterByName(name, url) {
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function ouvrirArticle(e) {
+function openArticle(e) {
   document.location.href = 'article.php?article=' + e.getAttribute('data-article');
 }
 
 function miseAJourCompte() {
-  document.getElementById('nomembre').value = noMembre;
+  document.getElementById('memberNo').value = memberNo;
   document.getElementById('nocivic').value = noCivic;
   document.getElementById('rue').value = rue;
   document.getElementById('app').value = app;
@@ -192,7 +189,7 @@ function displayResults(filtre) {
 
 		var tr = document.createElement('tr');
 		tr.setAttribute("data-article", article.id);
-		tr.setAttribute("onclick", "ouvrirArticle(this)");
+		tr.setAttribute("onclick", "openArticle(this)");
 
 		var name = document.createElement('td');
 		var author = document.createElement('td');
@@ -214,59 +211,32 @@ function displayResults(filtre) {
 	sortTables();
 }
 
-function desabonnement(e) {
+function subscribe(e) {
 	var xmlhttp = new getXMLHttpRequest();
 	var formData = new FormData();
 
-	var row = e.parentNode.parentNode;
-	var tbody = row.parentNode;
+	formData.append('memberNo', memberNo);
+	formData.append('articleId', e.getAttribute('data-article'));
 
-	formData.append('f', 'desabonnement');
-	formData.append('noMembre', noMembre);
-	formData.append('idArticle', e.getAttribute('data-article'));
+	if (e.getAttribute('data-state') === 'subscribed') {
+		formData.append('f', 'unsubscribe');
+	} else {
+		formData.append('f', 'subscribe');
+	}
 
 	xmlhttp.onreadystatechange = function(res) {
 		if (xmlhttp.readyState==4) {
 			if (xmlhttp.responseText) {
-				tbody.removeChild(row);
+				if (e.getAttribute('data-state') === 'subscribed') {
+					e.setAttribute('data-state', 'unsubscribed');
+				} else {
+					e.setAttribute('data-state', 'subscribed');
+				}
 			}
 		}
 	};
 
-	xmlhttp.open('POST', 'res/abonnement_article.php', true);
-	xmlhttp.send(formData);
-}
-
-function abonnement(e) {
-	var xmlhttp = new getXMLHttpRequest();
-	var formData = new FormData();
-
-	formData.append('noMembre', noMembre);
-	formData.append('idArticle', e.getAttribute('data-article'));
-
-	if (e.getAttribute('data-state') === 'abonne') {
-		formData.append('f', 'desabonnement');
-
-		xmlhttp.onreadystatechange = function(res) {
-			if (xmlhttp.readyState==4) {
-				if (xmlhttp.responseText) {
-					e.setAttribute('data-state', 'desabonne');
-				}
-			}
-		};
-	} else {
-		formData.append('f', 'abonnement');
-
-		xmlhttp.onreadystatechange = function(res) {
-			if (xmlhttp.readyState==4) {
-				if (xmlhttp.responseText) {
-					e.setAttribute('data-state', 'abonne');
-				}
-			}
-		};
-	}
-
-	xmlhttp.open('POST', 'res/abonnement_article.php', true);
+	xmlhttp.open('POST', 'res/article_subscription.php', true);
 	xmlhttp.send(formData);
 }
 
@@ -334,7 +304,7 @@ function verifyCoordonates(event) {
 	var xmlhttp = new getXMLHttpRequest();
 	var formData = new FormData();
 
-  formData.append('nomembre', event.target.nomembre.value);
+  formData.append('memberNo', event.target.memberNo.value);
   formData.append('nocivic', inputNoCivic.value);
   formData.append('codepostal', inputCodePostal.value.replace(' ', ''));
   formData.append('telephone1', inputTel1.value.replace('-', '').replace('(', '').replace(' ', '').replace('.', ''));
@@ -361,21 +331,22 @@ function verifyCoordonates(event) {
 
 function eventHandlers() {
 	window.addEventListener('scroll', deleteTooltip);
+
 	document.getElementById('search').addEventListener('search', function(event) {
 		document.location.href = 'recherche.php?r=' + event.target.value;
 	});
 
-	var desuet = document.getElementsByClassName('desuet');
-	for(noDesuet = 0; noDesuet < desuet.length; noDesuet++) {
-	  desuet[noDesuet].addEventListener('mouseover', createTooltip);
-	  desuet[noDesuet].addEventListener('mouseout', deleteTooltip);
+	var outdated = document.getElementsByClassName('outdated');
+	for(noOutdated = 0; noOutdated < outdated.length; noOutdated++) {
+	  outdated[noOutdated].addEventListener('mouseover', createTooltip);
+	  outdated[noOutdated].addEventListener('mouseout', deleteTooltip);
 	}
 
 	if(document.getElementById('search-form')) {
 		document.getElementById('search-form').addEventListener('submit', search);
 
-		var filtres = document.forms['search-form'].elements["filtre"];
-		for(var i = 0; i < filtres.length; i++) {
+		var filters = document.forms['search-form'].elements["filtre"];
+		for(var i = 0; i < filters.length; i++) {
 			filtres[i].addEventListener("change", function(event) {
 				displayResults(event.target.value);
 			});
@@ -403,7 +374,9 @@ var r = getParameterByName('r');
 slideoutMenu();
 eventHandlers();
 
-if(r) {
+if(r && document.getElementById('recherche') &&
+		document.getElementById('btn-recherche')) {
+
 	document.getElementById('recherche').value = r;
 	document.getElementById('btn-recherche').click();
 }

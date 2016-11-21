@@ -269,7 +269,7 @@ function argentARemettre() {
   });
 }
 
-function createTable(membres, total) {
+function createTable(members, total) {
   var title = document.createElement('h2');
   title.appendChild(document.createTextNode("Argent total à remettre " + total + "$"));
 
@@ -299,23 +299,23 @@ function createTable(membres, total) {
   thead.appendChild(headRow);
   table.appendChild(thead);
 
-  Object.keys(membres).forEach(function(key) {
+  Object.keys(members).forEach(function(key) {
     var bodyRow = document.createElement('tr');
 
     var td = document.createElement('td');
-    td.appendChild(document.createTextNode(membres[key]['no']));
+    td.appendChild(document.createTextNode(members[key]['no']));
     bodyRow.appendChild(td);
 
     td = document.createElement('td');
-    td.appendChild(document.createTextNode(membres[key]['nom']));
+    td.appendChild(document.createTextNode(members[key]['nom']));
     bodyRow.appendChild(td);
 
     td = document.createElement('td');
-    td.appendChild(document.createTextNode(membres[key]['prenom']));
+    td.appendChild(document.createTextNode(members[key]['prenom']));
     bodyRow.appendChild(td);
 
     td = document.createElement('td');
-    td.appendChild(document.createTextNode(membres[key]['montant'] + "$"));
+    td.appendChild(document.createTextNode(members[key]['montant'] + "$"));
     bodyRow.appendChild(td);
 
     tbody.appendChild(bodyRow);
@@ -371,7 +371,7 @@ function livresValidesNonVendus() {
       var category = document.createElement('td');
 
       tr.setAttribute("data-article", article.id);
-      tr.setAttribute("onclick", "ouvrirArticle(this)");
+      tr.setAttribute("onclick", "openArticle(this)");
 
       title.appendChild(document.createTextNode(article.title));
       category.appendChild(document.createTextNode(article.category));

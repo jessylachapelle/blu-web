@@ -716,9 +716,9 @@
                     function (e) {
                         var totalRows = ($this[0].tBodies[0] && $this[0].tBodies[0].rows.length) || 0;
                         if (!this.sortDisabled && totalRows > 0) {
-                            // Only call sortStart if sorting is
+                            // Only call sortrequiredt if sorting is
                             // enabled.
-                            $this.trigger("sortStart");
+                            $this.trigger("sortrequiredt");
                             // store exp, for speed
                             var $cell = $(this);
                             // get current column index
@@ -778,7 +778,7 @@
                         // cancel selection
                     }).mousedown(function () {
                         if (config.cancelSelection) {
-                            this.onselectstart = function () {
+                            this.onselectrequiredt = function () {
                                 return false
                             };
                             return false;
@@ -802,7 +802,7 @@
                         cache.normalized[pos[0]][pos[1]] = config.parsers[pos[1]].format(
                         getElementText(config, cell), cell);
                     }).bind("sorton", function (e, list) {
-                        $(this).trigger("sortStart");
+                        $(this).trigger("sortrequiredt");
                         config.sortList = list;
                         // update and store the sortlist
                         var sortList = config.sortList;

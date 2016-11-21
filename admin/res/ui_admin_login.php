@@ -11,8 +11,8 @@ if(isset($_GET['error']) && $_GET['error'] == '401') {
   <label for="password">Mot de passe :</label>
   <input id="password" name="password" type="password" required="" />
   <div class="checkbox-container">
-    <input id="connexion" name="connexion" type="checkbox" value="connexion" />
-    <label for="connexion">Garder ma session active</label>
+    <input id="connection" name="connection" type="checkbox" value="connection" />
+    <label for="connection">Garder ma session active</label>
   </div>
-  <button id="connexion">Connexion</button>
+  <button id="connection">Connexion</button>
 </form>

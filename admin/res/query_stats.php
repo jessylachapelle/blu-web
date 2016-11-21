@@ -52,7 +52,7 @@ function statistiquesTransaction($date, $typeTransaction) {
   }
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   $stats = [
@@ -78,7 +78,7 @@ function economieParentEtudiant($date) {
   }
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   $economie = 0;
 
@@ -91,22 +91,22 @@ function economieParentEtudiant($date) {
 }
 
 function argentTotalARemettre($compteActif) {
-  $membres = getMembreAvecRemise($compteActif);
+  $members = getMembreAvecRemise($compteActif);
   $total = 0;
 
-  foreach ($membres as &$membre) {
-    $montant = ArgentRemettreParMembre($membre['no']);
-    $membre['montant'] = $montant;
+  foreach ($members as &$member) {
+    $montant = ArgentRemettreParMembre($member['no']);
+    $member['montant'] = $montant;
 
-    if($membre['montant'] == 0) {
-      unset($membres[$membre['no']]);
+    if($member['montant'] == 0) {
+      unset($members[$member['no']]);
     } else {
-     $total += $membre['montant'];
+     $total += $member['montant'];
     }
   }
 
-  $membres['total'] = $total;
-  return $membres;
+  $members['total'] = $total;
+  return $members;
 }
 
 function getMembreAvecRemise($compteActif) {
@@ -124,40 +124,40 @@ function getMembreAvecRemise($compteActif) {
             ORDER BY nom, prenom, no;";
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
-  $membres = [];
+  $members = [];
 
   while($row = mysqli_fetch_assoc($result)) {
-    $membre = [
+    $member = [
       'no' => $row['no'],
       'nom' => utf8_encode($row['nom']),
       'prenom' => utf8_encode($row['prenom']),
       'montant' => 0
     ];
 
-    $membres[$row['no']] = $membre;
+    $members[$row['no']] = $member;
   }
 
   mysqli_close($connection);
-  return $membres;
+  return $members;
 }
 
-function ArgentRemettreParMembre($noMembre) {
+function ArgentRemettreParMembre($memberNo) {
   $query = "SELECT SUM(exemplaire.prix) AS montant
             FROM transaction
             INNER JOIN exemplaire
               ON transaction.id_exemplaire=exemplaire.id
-            WHERE no_membre=$noMembre
+            WHERE no_membre=$memberNo
               AND (transaction.id_type=2
                   OR transaction.id_type=3)
               AND id_exemplaire NOT IN(SELECT id_exemplaire
                                        FROM transaction
-                                       WHERE no_membre=$noMembre
+                                       WHERE no_membre=$memberNo
                                        AND id_type=4);";
 
    include "../../#/connection.php";
-   $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
    $row = mysqli_fetch_assoc($result);
 
    $montant = $row['montant'];
@@ -194,7 +194,7 @@ function compteBLU($actif) {
             AND transaction.no_membre IN(SELECT no FROM membre WHERE derniere_activite>='$date');";
 
   include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
 
   $data = [
@@ -231,7 +231,7 @@ function livresValidesNonVendus() {
             AND pv.id != 5092";
 
     include "../../#/connection.php";
-    $result = mysqli_query($connection, $query) or die ("Query failed: '"  . $query . "' " . mysqli_error());
+    $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
     $articles = [];
 

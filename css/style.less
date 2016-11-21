@@ -162,7 +162,12 @@ footer {
 		color:      @white;
 		margin:     auto;
 		text-align: center;
+    padding:    20px 0;
 	}
+
+  p {
+    margin: 0;
+  }
 
   a {
     color:           @white;
@@ -203,7 +208,7 @@ footer {
   cursor: default;
 }
 
-.desuet {
+.outdated {
   background-color: #BBB;
 }
 
@@ -211,7 +216,7 @@ footer {
   background-color: #A0B389;
 }
 
-.etoile {
+.required {
   color: red;
 }
 
@@ -235,6 +240,13 @@ footer {
   font-size: smaller;
 }
 
+//TODO
+.borderless {
+
+  tr, th, td {
+
+  }
+}
 
 /* ID
 ========*/
@@ -253,11 +265,11 @@ footer {
   margin-top: 15px;
 }
 
-#connexion {
+#connection {
   margin-top: 1em;
 }
 
-#frmContact input, textarea {
+#contact-form input, textarea {
   margin-bottom: 1em;
   margin-top:    0.5em;
 }
@@ -313,12 +325,12 @@ footer {
 
 /* Attribut
 ===================*/
-[data-state=abonne] {
+[data-state=subscribed] {
   cursor: pointer;
   color: #F6D300;
 }
 
-[data-state=desabonne] {
+[data-state=unsubscribed] {
   cursor: pointer;
   color: grey;
 }
