@@ -12,8 +12,8 @@
 			<?php $messages = getMessages();
 			foreach ($messages as $message) { ?>
 				<h2><?php echo $message['title']; ?></h2>
-		    <p><?php echo $message['text']; ?></p>
-		    <p class="pdate"><?php echo $message['startDate']; ?></p>
+		    <p><?php echo $message['message']; ?></p>
+		    <p class="pdate"><?php echo $message['start_date']; ?></p>
 		    <hr/>
 			<?php } ?>
 		</main>

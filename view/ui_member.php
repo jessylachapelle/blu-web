@@ -5,19 +5,17 @@
 
   $member = getMembre($_SESSION['memberNo']);
   $member->setTelephone(getTelephone($member->getNo()));
-  $suivi = getArticleSuivi($member->getNo());
-  $aVendre = getExemplairesAVendre($member->getNo());
-  $vendu = getExemplairesVendu($member->getNo());
-  $argentRemis = getExemplaireArgentRemis($member->getNo());
+  $itemFeed = getItemFeed($member->getNo());
+  $inStock = getCopiesInStock($member->getNo());
+  $sold = getCopiesSold($member->getNo());
+  $paid = getCopiesPaid($member->getNo());
 ?>
 
 <div id='overlay'>
   <form id='coord-form' method='post'>
     <input id='memberNo' name='memberNo' type="hidden" />
     <div>
-      <input id='nocivic' name='nocivic' type='text' placeholder='No civic' value='<?php echo $member->getNoCivic() ?>' required='' />
-      <input id='rue' name='rue' type='text' placeholder='Rue' required='' />
-      <input id='app' name='app' type='text' placeholder='App.' />
+      <input id='address' name='address' type='text' placeholder='Adresse' required='required' />
     </div>
     <div>
       <input id='codepostal' name='codepostal' type='text' placeholder='Code Postal' required='' />
@@ -58,9 +56,7 @@
 <script>
   var member = '<?php echo json_encode((array) $member); ?>'
   var memberNo = '<?php echo $member->getNo() ?>';
-  var noCivic = '<?php echo $member->getNoCivic() ?>';
-  var rue = '<?php echo $member->getRue() ?>';
-  var app = '<?php echo $member->getApp() ?>';
+  var address = '<?php echo $member->getAddress() ?>';
   var codePostal = '<?php echo $member->getCodePostal() ?>';
   var ville = '<?php echo $member->getVille() ?>';
   var province = '<?php echo $member->getProvince() ?>';
@@ -74,17 +70,17 @@
 </script>
 
 <?php
-  if($member->getTelephone() != null) {
+  if ($member->getTelephone() != null) {
     $noTel = 1;
 
-    foreach($member->getTelephone() as $telephone) {
-      $id = $telephone->getId();
-      $numero = $telephone->getNumero();
-      $note = $telephone->getNote();
+    foreach ($member->getTelephone() as $phone) {
+      $id = $phone->getId();
+      $number = $phone->getNumero();
+      $note = $phone->getNote();
 
       echo "<script>
               idTel$noTel = $id;
-              tel$noTel = '$numero';
+              tel$noTel = '$number';
               note$noTel = '$note';
             </script>";
       $noTel++;
@@ -117,18 +113,16 @@
     </table>
 
 <?php
-if(isset($_GET['renouvele']) && $_GET['renouvele'] == true)
+if (isset($_GET['renouvele']) && $_GET['renouvele'] == true) {
   echo "<button id='btnrenouv' class='desactive' disabled=''>Compte renouvelé</button>";
-else
+} else {
   echo "<form class='nostyle' action='res/renew_account.php'><button id='btnrenouv'>Renouveler le compte</button></form></section>";
+}
 
 // COORDONNÉES
 $htmlStr = "<section class='inline'>
               <p><b>Coordonnées :</b></p>
-              <p>" . $member->getNoCivic() . ", " . $member->getRue();
-
-if($member->getApp() != null)
-  $htmlStr .= " app. " . $member->getApp();
+              <p>" . $member->getAddress();
 
 $htmlStr .= ",<br/>" . $member->getVille() . ", " . $member->getProvince() . ",<br/>" . $member->getCodePostal() . "<br/>";
 
@@ -149,7 +143,7 @@ $htmlStr .= $member->getCourriel() . "</p>
 $nbArticle = 0;
 $htmlTableStr = "";
 
-foreach($suivi AS $e) {
+foreach($itemFeed AS $e) {
   $nbArticle++;
 
   if($e->getPrice() > 0)
@@ -184,14 +178,15 @@ if($nbArticle > 0)
 $nbArticle = 0;
 $montant = 0;
 $htmlTableStr = "";
-foreach($aVendre as $e) {
+foreach($inStock as $e) {
   $nbArticle++;
   $montant += $e->getPrice();
 
-  if(articleEstDesuet($e->getArticle()))
+  if (itemIsOutdated($e->getArticle())) {
     $htmlTableStr .= "<tr class='outdated' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
-  else
+  } else {
     $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
+  }
 
   $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
                     <td>" . $e->getDateAdded() . "</td>
@@ -199,7 +194,7 @@ foreach($aVendre as $e) {
                     </tr>";
 }
 
-if($nbArticle > 0)
+if ($nbArticle > 0) {
   $htmlStr .= "<section>
                 <h2>À vendre [$nbArticle articles, $montant $]</h2>
                 <div class='table-wrapper'>
@@ -217,13 +212,14 @@ if($nbArticle > 0)
                   </table>
                 </div>
               </section>";
+}
 
 // ARTICLES VENDUS
 $nbArticle = 0;
 $montant = 0;
 $htmlTableStr = "";
 
-foreach($vendu as $e) {
+foreach($sold as $e) {
   $nbArticle++;
   $montant += $e->getPrice();
   $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>
@@ -234,7 +230,7 @@ foreach($vendu as $e) {
                     </tr>";
 }
 
-if($nbArticle > 0)
+if ($nbArticle > 0) {
   $htmlStr .= "<section>
                 <h2>Vendu [$nbArticle articles, $montant $]</h2>
                 <div class='table-wrapper'>
@@ -253,13 +249,13 @@ if($nbArticle > 0)
                   </table>
                 </div>
               </section>";
-
+}
 
 $nbArticle = 0;
 $montant = 0;
 $htmlTableStr = "";
 
-foreach($argentRemis as $e) {
+foreach($paid as $e) {
   $nbArticle++;
   $montant += $e->getPrice();
 
@@ -272,7 +268,7 @@ foreach($argentRemis as $e) {
                     </tr>";
 }
 
-if($nbArticle > 0)
+if ($nbArticle > 0) {
   $htmlStr .= "<section>
                 <h2>Argent remis [$nbArticle articles, $montant $]</h2>
                 <div class='table-wrapper'>
@@ -292,7 +288,7 @@ if($nbArticle > 0)
                   </table>
                 </div>
               </section>";
-
+}
 
 echo $htmlStr;
 ?>
@@ -302,110 +298,113 @@ echo $htmlStr;
 
 
 <?php
-function getMembre($nodossier) {
+function getMembre($no) {
   $member = new Membre();
 
-  $query = "SELECT membre.*, ville.nom AS ville, province.nom AS province FROM membre
-            INNER JOIN ville ON membre.id_ville=ville.id
-            INNER JOIN province ON ville.code_province=province.code
-            WHERE membre.no=$nodossier";
+  $query = "SELECT member.*,
+                   city.name AS city,
+                   state.name AS state
+            FROM member
+            INNER JOIN city
+              ON member.city=city.id
+            INNER JOIN state
+              ON city.state=state.code
+            WHERE member.no=$no;";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
   $member->setNo($row['no']);
-  $member->setPrenom($row['prenom']);
-  $member->setNom($row['nom']);
-  $member->setInscription(date('Y-m-d', strtotime($row['inscription'])));
-  $member->setDerniereActivite(date('Y-m-d', strtotime($row['derniere_activite'])));
-  $member->setNoCivic($row['no_civic']);
-  $member->setRue($row['rue']);
-  $member->setApp($row['app']);
-  $member->setVille($row['ville']);
-  $member->setProvince($row['province']);
-  $member->setCodePostal($row['code_postal']);
-  $member->setCourriel($row['courriel']);
+  $member->setPrenom($row['first_name']);
+  $member->setNom($row['last_name']);
+  $member->setInscription(date('Y-m-d', strtotime($row['registration'])));
+  $member->setDerniereActivite(date('Y-m-d', strtotime($row['last_activity'])));
+  $member->setAddress($row['address']);
+  $member->setVille($row['city']);
+  $member->setProvince($row['state']);
+  $member->setCourriel($row['email']);
 
-  $member->setCodePostal(substr($member->getCodePostal(), 0, 3) . " " . substr($member->getCodePostal(), 3, 3));
+  if ($row['zip'] != null && $row['zip'] != '') {
+    $member->setCodePostal(substr($row['zip'], 0, 3) . " " . substr($row['zip'], 3, 3));
+  }
 
-  mysqli_close($connection);
   return $member;
 }
 
 function getTelephone($memberNo) {
-  $telephones = array();
+  $phones = [];
 
-  $query = "SELECT id, numero, note FROM telephone WHERE no_membre=$memberNo";
+  $query = "SELECT id, number, note FROM phone WHERE member=$memberNo;";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
-    $telephone = new Telephone();
+    $phone = new Telephone();
 
-    $telephone->setId($row['id']);
-    $telephone->setNumero($row['numero']);
-    $telephone->setNote($row['note']);
+    $phone->setId($row['id']);
+    $phone->setNumero(substr($row['number'], 0, 3) . " " . substr($row['number'], 3, 3) . "-" . substr($row['number'], 6, 4));
+    $phone->setNote($row['note']);
 
-    $telephone->setNumero(substr($telephone->getNumero(), 0, 3) . " " . substr($telephone->getNumero(), 3, 3) . "-" . substr($telephone->getNumero(), 6, 4));
-
-    array_push($telephones, $telephone);
+    array_push($phones, $phone);
   }
 
   mysqli_close($connection);
-  return $telephones;
+  return $phones;
 }
 
-function getExemplairesAVendre($memberNo) {
-  return getExemplaires($memberNo, 1);
+function getCopiesInStock($memberNo) {
+  return getCopies($memberNo, 1);
 }
 
-function getExemplairesVendu($memberNo) {
-  $copys = getExemplaires($memberNo, 2);
+function getCopiesSold($memberNo) {
+  $copies = getCopies($memberNo, 2);
 
-  foreach($copys as $e)
-    $e->setDateAdded(getDateTransaction($e->getId(), 1));
-  return $copys;
+  foreach($copies as $copy)
+    $copy->setDateAdded(getTransactionDate($copy->getId(), 1));
+  return $copies;
 }
 
-function getExemplaireArgentRemis($memberNo) {
-  $copys = getExemplaires($memberNo, 4);
+function getCopiesPaid($memberNo) {
+  $copies = getCopies($memberNo, 4);
 
-  foreach($copys as $e) {
-    $e->setDateAdded(getDateTransaction($e->getId(), 1));
-    $e->setDateSold(getDateTransaction($e->getId(), 2));
+  foreach($copies as $copy) {
+    $copy->setDateAdded(getTransactionDate($copy->getId(), 1));
+    $copy->setDateSold(getTransactionDate($copy->getId(), 2));
   }
 
-  return $copys;
+  return $copies;
 }
 
-function getExemplaires($memberNo, $typeTransaction) {
-  $copys = Array();
+function getCopies($memberNo, $transactionType) {
+  $copies = [];
 
-  $query = "SELECT exemplaire.id AS id,
-                   article.id AS article,
-                   article.nom,
+  $query = "SELECT copy.id,
+                   item.id AS item_id,
+                   item.name AS item_name,
                    transaction.date,
-                   exemplaire.prix
+                   copy.price
             FROM transaction
-            INNER JOIN exemplaire
-              ON transaction.id_exemplaire=exemplaire.id
-            INNER JOIN article
-              ON exemplaire.id_article=article.id
-            WHERE no_membre=$memberNo";
+            INNER JOIN copy
+              ON transaction.copy=copy.id
+            INNER JOIN item
+              ON copy.item=item.id
+            WHERE transaction.member=$memberNo";
 
-  if($typeTransaction == 2 || $typeTransaction == 3)
-    $query .= " AND (id_type=2 OR id_type=3)";
-  else
-    $query .= " AND id_type=$typeTransaction";
+  if ($transactionType == 2 || $transactionType == 3) {
+    $query .= " AND (type=2 OR type=3)";
+    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND type=4)";
+  } else {
+    $query .= " AND type=$transactionType";
+  }
 
-  if($typeTransaction == 1)
-    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$memberNo AND (id_type=2 OR id_type=3))";
-  elseif($typeTransaction == 2 || $typeTransaction == 3)
-    $query .= " AND id_exemplaire NOT IN(SELECT id_exemplaire FROM transaction WHERE no_membre=$memberNo AND id_type=4)";
+  if ($transactionType == 1) {
+    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND (type=2 OR type=3))";
+  }
 
-  $query .= " ORDER BY nom";
+  $query .= " ORDER BY item_name";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
@@ -414,97 +413,110 @@ function getExemplaires($memberNo, $typeTransaction) {
     $copy = new Exemplaire();
 
     $copy->setId($row['id']);
-    $copy->setArticle($row['article']);
-    $copy->setTitle($row['nom']);
-    $copy->setDate(date( 'Y-m-d', strtotime($row['date'])), $typeTransaction);
-    $copy->setPrice($row['prix']);
+    $copy->setArticle($row['item_id']);
+    $copy->setTitle($row['item_name']);
+    $copy->setDate(date( 'Y-m-d', strtotime($row['date'])), $transactionType);
+    $copy->setPrice($row['price']);
 
-    array_push($copys, $copy);
+    array_push($copies, $copy);
   }
 
   mysqli_close($connection);
-  return $copys;
+  return $copies;
 }
 
-function getArticleSuivi($memberNo) {
-  $articles = array();
+function getItemFeed($memberNo) {
+  $items = [];
 
-  $query = "SELECT id, nom FROM article WHERE id IN (SELECT no_article FROM article_suivi WHERE no_membre=$memberNo)";
+  $query = "SELECT item.id, item.name
+            FROM item_feed
+            INNER JOIN item
+              ON item_feed.item=item.id
+            WHERE member=$memberNo;";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
 
   while($row = mysqli_fetch_assoc($result)) {
-    $e = new Exemplaire();
+    $copy = new Exemplaire();
 
-    $e->setArticle($row['id']);
-    $e->setTitle($row['nom']);
-    $e->setPrice(getNombreEnVente($e->getArticle()));
+    $copy->setArticle($row['id']);
+    $copy->setTitle($row['name']);
+    $copy>setPrice(getAmountInStock($copy->getArticle()));
 
-    array_push($articles, $e);
+    array_push($items, $copy);
   }
 
-  return $articles;
+  return $items;
 }
 
-function getNombreMisEnVente($idArticle) {
-  $query = "SELECT COUNT(*) AS nombre FROM transaction
-            INNER JOIN exemplaire ON transaction.id_exemplaire=exemplaire.id
-            INNER JOIN article ON exemplaire.id_article=article.id
-            WHERE article.id=$idArticle
-            AND transaction.id_type=1";
+function getTotalInventory($itemId) {
+  $query = "SELECT COUNT(*) AS count
+            FROM transaction
+            INNER JOIN copy
+              ON transaction.copy=copy.id
+            INNER JOIN item
+              ON copy.item=item.id
+            WHERE item.id=$itemId
+            AND transaction.type=1";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
-  return $row['nombre'];
+  return $row['count'];
 }
 
-function getNombreVendu($idArticle) {
-  $query = "SELECT COUNT(*) AS nombre FROM transaction
-            INNER JOIN exemplaire ON transaction.id_exemplaire=exemplaire.id
-            INNER JOIN article ON exemplaire.id_article=article.id
-            WHERE article.id=$idArticle
-            AND (transaction.id_type=2 OR transaction.id_type=3)";
+function gotAmountSold($itemId) {
+  $query = "SELECT COUNT(*) AS count
+            FROM transaction
+            INNER JOIN copy
+              ON transaction.copy=copy.id
+            INNER JOIN item
+              ON copy.item=item.id
+            WHERE item.id=$itemId
+            AND (transaction.type=2 OR transaction.type=3)";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
-  return $row['nombre'];
+  return $row['count'];
 }
 
-function getNombreEnVente($idArticle) {
-  return (getNombreMisEnVente($idArticle) - getNombreVendu($idArticle));
+function getAmountInStock($idArticle) {
+  return (getTotalInventory($idArticle) - gotAmountSold($idArticle));
 }
 
-function getDateTransaction($idExemplaire, $typeTransaction) {
-  if($typeTransaction == 2 || $typeTransaction == 3)
-    $query = "SELECT date FROM transaction WHERE id_exemplaire=$idExemplaire AND (id_type=2 OR id_type=3)";
-  else
-    $query = "SELECT date FROM transaction WHERE id_exemplaire=$idExemplaire AND id_type=$typeTransaction";
+function getTransactionDate($copyId, $transactionType) {
+  $query = "";
+
+  if ($transactionType == 2 || $transactionType == 3) {
+    $query = "SELECT date FROM transaction WHERE copy=$copyId AND (type=2 OR type=3)";
+  } else {
+    $query = "SELECT date FROM transaction WHERE copy=$copyId AND type=$transactionType";
+  }
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
   return date( 'Y-m-d', strtotime($row['date']));
 }
 
-function articleEstDesuet($idArticle) {
-  $query = "SELECT COUNT(*) AS nombre
-          FROM propriete_valeur
-          INNER JOIN propriete_article
-            ON propriete_valeur.id=propriete_article.id_propriete_valeur
-          WHERE propriete_article.id_article=$idArticle
-            AND propriete_valeur.id_propriete=15";
+function itemIsOutdated($itemId) {
+  $query = "SELECT COUNT(id) AS count
+            FROM item WHERE id=$itemId
+            AND status=(SELECT id FROM status WHERE code='VALID');";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
-  return $row['nombre'] != 0;
+  return $row['count'] == 0;
 }
-
 ?>
