@@ -11,7 +11,7 @@ if (isset($_POST['f'])) {
 }
 
 function subscribe($memberNo, $articleId) {
-  $query = "INSERT INTO article_suivi(no_membre, no_article) VALUES ($memberNo, $articleId);";
+  $query = "INSERT INTO item_feed(member, item) VALUES ($memberNo, $articleId);";
 
   include "../#/connection.php";
   $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
@@ -20,7 +20,7 @@ function subscribe($memberNo, $articleId) {
 }
 
 function unsubscribe($memberNo, $articleId) {
-  $query = "DELETE FROM article_suivi WHERE no_membre=$memberNo AND no_article=$articleId;";
+  $query = "DELETE FROM item_feed WHERE member=$memberNo AND item=$articleId;";
 
   include "../#/connection.php";
   $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));

@@ -1,6 +1,6 @@
 <?php
 /**
-* 
+*
 */
 class Membre {
   private $_no;
@@ -9,14 +9,14 @@ class Membre {
   private $_inscription;
   private $_derniereActivite;
   private $_noCivic;
-  private $_rue;
+  private $_address;
   private $_app;
   private $_ville;
   private $_province;
   private $_codePostal;
   private $_courriel;
   private $_telephone;
-  
+
   public function __construct() {
     $this->_no = null;
     $this->_prenom = null;
@@ -24,14 +24,14 @@ class Membre {
     $this->_inscription = null;
     $this->_derniereActivite = null;
     $this->_noCivic = null;
-    $this->_rue = null;
+    $this->_address = null;
     $this->_ville = null;
     $this->_province = null;
     $this->_codePostal = null;
     $this->_courriel = null;
     $this->_telephone = null;
   }
-  
+
   public function getNo(){
     return $this->_no;
   }
@@ -55,23 +55,23 @@ class Membre {
   public function setNom($nom){
     $this->_nom = $nom;
   }
-  
+
   public function getInscription() {
     return $this->_inscription;
   }
-  
+
   public function setInscription($inscription) {
     $this->_inscription = $inscription;
   }
-  
+
   public function getDerniereActivite() {
     return $this->_derniereActivite;
   }
-  
+
   public function setDerniereActivite($derniereActivite) {
     $this->_derniereActivite = $derniereActivite;
   }
-  
+
   public function getDateDesactivation() {
     $date = new DateTime($this->getDerniereActivite());
     $date->add(new DateInterval('P1Y'));
@@ -86,18 +86,18 @@ class Membre {
     $this->_noCivic = $noCivic;
   }
 
-  public function getRue(){
-    return $this->_rue;
+  public function getAddress(){
+    return $this->_address;
   }
 
-  public function setRue($rue){
-    $this->_rue = $rue;
+  public function setAddress($address){
+    $this->_address = $address;
   }
-  
+
   public function getApp() {
     return $this->_app;
   }
-  
+
   public function setApp($app) {
     $this->_app = $app;
   }
@@ -125,7 +125,7 @@ class Membre {
   public function setCodePostal($codePostal){
     $this->_codePostal = $codePostal;
   }
-  
+
   public function getCourriel(){
     return $this->_courriel;
   }

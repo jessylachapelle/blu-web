@@ -1,25 +1,20 @@
 <?php
-require_once "../class/member.php";
-require_once "../class/telephone.php";
+require_once '../class/member.php';
+require_once '../class/telephone.php';
 
 $member = new Membre();
-$telephones = array();
-$ville = str_replace("'", "''", $_POST['ville']);
-$province = $_POST['province'];
-$villeId = getIdVille($ville);
-
-if($villeId == 0) {
-  $villeId = insertVille($ville, $province);
-}
+$phones = [];
+$city = str_replace("'", "''", $_POST['ville']);
+$cityId = getCityId($city, $_POST['province']);
 
 $tel1 = new Telephone();
 $tel1->setId($_POST['idtel1']);
 $tel1->setNumero($_POST['telephone1']);
 $tel1->setNote(str_replace("'", "''", $_POST['note1']));
 
-array_push($telephones, $tel1);
+array_push($phones, $tel1);
 
-if($_POST['telephone2'] != "") {
+if($_POST['telephone2'] != '') {
   $tel2 = new Telephone();
   $tel2->setId($_POST['idtel2']);
   $tel2->setNumero($_POST['telephone2']);
@@ -29,12 +24,10 @@ if($_POST['telephone2'] != "") {
 }
 
 $member->setNo($_POST['memberNo']);
-$member->setNoCivic($_POST['nocivic']);
-$member->setRue($rue = str_replace("'", "''", $_POST['rue']));
-$member->setApp(str_replace("'", "''", $_POST['app']));
+$member->setAdress($_POST['address']);
 $member->setCodePostal(str_replace(" ", "", $_POST['codepostal']));
-$member->setVille($villeId);
-$member->setTelephone($telephones);
+$member->setVille($cityId);
+$member->setTelephone($phones);
 $member->setCourriel($_POST['courriel']);
 
 echo updateMembre($member);
@@ -44,67 +37,75 @@ echo updateMembre($member);
 
 
 <?php
-function getIdVille($ville) {
+function getCityId($city) {
   $id = 0;
-  $query = "SELECT id FROM ville WHERE nom='$ville' LIMIT 1";
+  $query = "SELECT id FROM city WHERE name='$city' LIMIT 1";
 
-  include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   while($row = mysqli_fetch_assoc($result)) {
     $id = $row['id'];
   }
 
   mysqli_close($connection);
-  return $id;
+  return $id > 0 ? $id : insertCity($city, $state);
 }
 
-function insertVille($ville, $province) {
-  $query = "INSERT INTO ville(nom, code_province) VALUES ('$ville', '$province')";
+function insertCity($city, $state) {
+  $query = "INSERT INTO city(name, state) VALUES ('$city', '$state')";
 
-  include "../#/connection.php";
-  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../#/connection.php';
+  mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   $id = mysqli_insert_id($connection);
 
   mysqli_close($connection);
-  echo $id;
+  return $id;
 }
 
 function updateMembre($member) {
-  $query = "UPDATE membre
-            SET courriel='" . $member->getCourriel() ."',
-                no_civic='" . $member->getNoCivic() . "',
-                rue='" . $member->getRue() . "',
-                app='" . $member->getApp() . "',
-                code_postal='" . $member->getCodePostal() . "',
-                id_ville='" . $member->getVille() . "'
-            WHERE no='" . $member->getNo() . "'";
+  $no = $member->getNo()
+  $email = $member->getCourriel();
+  $address = $member->getAddress();
+  $zip = $member->getCodePostal();
+  $city = $member->getVille();
 
-  include "../#/connection.php";
-  mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  $query = "UPDATE member
+            SET email='$email',
+                address='$address',
+                zip='$zip',
+                city='$city'
+            WHERE no='$no';";
+
+  include '../#/connection.php';
+  mysqli_query($connection, $query) or die("Query failed: '$query'");
+  mysqli_close($connection);
 
   foreach($member->getTelephone() as $telephone) {
-    setTelephone($telephone, $member->getNo());
+    setTelephone($telephone, $no);
   }
-  
-  mysqli_close($connection);
 
   return true;
 }
 
-function setTelephone($telephone, $memberNo) {
+function setTelephone($phone, $memberNo) {
   $query = "";
+  $id = $phone->getId();
+  $number = $phone->getNumero();
+  $note = $phone->getNote();
 
-  if($telephone->getId() != "" && $telephone->getId() != 0 && $telephone->getNumero() == "")
-    $query = "DELETE FROM telephone WHERE id='" . $telephone->getId() . "'";
-  elseif($telephone->getId() == 0 || $telephone->getId() == "")
-    $query = "INSERT INTO telephone(no_membre, numero, note) VALUES ('$memberNo', '" . $telephone->getNumero() . "', '" . $telephone->getNote() . "')";
-  else
-    $query = "UPDATE telephone SET numero='" . $telephone->getNumero() . "', note='" . $telephone->getNote() . "' WHERE id='" . $telephone->getId() . "'";
+  if ($id != '' && $id != 0 && $number == '') {
+    $query = "DELETE FROM phone WHERE id=$id;";
+  } else if ($id == '' || $id == 0) {
+    $query = "INSERT INTO phone(member, number, note)
+              VALUES ($memberNo, '$number', '$note');";
+  } else {
+    $query = "UPDATE phone SET number='$number', note='$note' WHERE id='$id';";
+  }
 
-  include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 }
 
 ?>
