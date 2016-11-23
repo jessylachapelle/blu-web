@@ -2,7 +2,7 @@ function modifier_nouvelle(id) {
   document.getElementById("actionTitre").innerHTML = "Modifier une nouvelle";
   document.getElementById("actionTexte").innerHTML = "Vous pouvez modifier une nouvelle existante à l'aide de ce formulaire.";
   fullId = "nouvelle_" + id;
-  
+
   document.getElementById("id_nouvelle").value = id;
   document.getElementById("titre").value = document.getElementById(fullId).children[0].innerHTML;
   document.getElementById("message").value = document.getElementById(fullId).children[1].innerHTML;
