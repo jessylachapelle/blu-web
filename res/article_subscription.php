@@ -10,20 +10,20 @@ if (isset($_POST['f'])) {
   }
 }
 
-function subscribe($memberNo, $articleId) {
-  $query = "INSERT INTO item_feed(member, item) VALUES ($memberNo, $articleId);";
+function subscribe($memberNo, $itemId) {
+  $query = "INSERT INTO item_feed(member, item) VALUES ($memberNo, $itemId);";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
+  $result = mysqli_query($connection, $query) or die ("Query failed: '$query'");
   mysqli_close($connection);
   return true;
 }
 
-function unsubscribe($memberNo, $articleId) {
-  $query = "DELETE FROM item_feed WHERE member=$memberNo AND item=$articleId;";
+function unsubscribe($memberNo, $itemId) {
+  $query = "DELETE FROM item_feed WHERE member=$memberNo AND item=$itemId;";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die ("Query failed: '$query' " . mysqli_error($connection));
+  $result = mysqli_query($connection, $query) or die ("Query failed: '$query'");
   mysqli_close($connection);
   return true;
 }

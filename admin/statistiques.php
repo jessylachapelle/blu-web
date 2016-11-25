@@ -33,21 +33,23 @@
 
 
 <?php
-function selecteurEdition($titre, $label, $selectedIndex) {
+function selecteurEdition($title, $label, $selectedIndex) {
   $index = 0;
-  echo "<label for='$titre'>$label</label>
-        <select id='$titre' class='selectEdition' name='$titre'>";
+  echo "<label for='$title'>$label</label>
+        <select id='$title' class='selectEdition' name='$title'>";
 
-  for($annee = Date('Y'); $annee > 2009; $annee--) {
-    if($index++ == $selectedIndex)
-      echo "<option value='H" . substr($annee, 2, 2) . "' selected>Hiver $annee</option>";
-    else
-      echo "<option value='H" . substr($annee, 2, 2) . "'>Hiver $annee</option>";
+  for ($year = Date('Y'); $year > 2009; $year--) {
+    if ($index++ == $selectedIndex) {
+      echo "<option value='H" . substr($year, 2, 2) . "' selected>Hiver $year</option>";
+    } else {
+      echo "<option value='H" . substr($year, 2, 2) . "'>Hiver $year</option>";
+    }
 
-    if($index++ == $selectedIndex)
-      echo "<option value='A" . substr(($annee - 1), 2, 2) . "' selected>Automne " . ($annee - 1) . "</option>";
-    else
-      echo "<option value='A" . substr(($annee - 1), 2, 2) . "'>Automne " . ($annee - 1) . "</option>";
+    if ($index++ == $selectedIndex) {
+      echo "<option value='A" . substr(($year - 1), 2, 2) . "' selected>Automne " . ($year - 1) . "</option>";
+    } else {
+      echo "<option value='A" . substr(($year - 1), 2, 2) . "'>Automne " . ($year - 1) . "</option>";
+    }
   }
 
   echo "</select>";
