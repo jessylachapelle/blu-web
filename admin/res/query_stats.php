@@ -2,10 +2,10 @@
 if(isset($_POST['f'])) {
   switch ($_POST['f']) {
     case "transactionDate":
-      echo json_encode(statsParDate($_POST['data']));
+      echo json_encode(statsByDate($_POST['data']));
       break;
     case "transactionIntervale":
-      echo json_encode(statsParEdition($_POST['data']));
+      echo json_encode(statsByEdition($_POST['data']));
       break;
     case "argentARemettre":
       echo json_encode(argentTotalARemettre($_POST['data']));
@@ -19,86 +19,74 @@ if(isset($_POST['f'])) {
   }
 }
 
-function statsParDate($date) {
+function statsByDate($date) {
   return [
-    "misEnVente" => statistiquesTransaction($date, 1),
-    "vente" => statistiquesTransaction($date, 2),
-    "venteParentEtudiant" => statistiquesTransaction($date, 3),
-    "economieParentEtudiant" => economieParentEtudiant($date),
-    "argentRemis" => statistiquesTransaction($date, 4)
+    'misEnVente' => statistiquesTransaction($date, 1),
+    'vente' => statistiquesTransaction($date, 2),
+    'venteParentEtudiant' => statistiquesTransaction($date, 3),
+    'economieParentEtudiant' => economieParentEtudiant($date),
+    'argentRemis' => statistiquesTransaction($date, 4)
   ];
 }
 
-function statsParEdition($edition) {
-  $annee = "20" . substr($edition, 1, 2);
-
-  if(substr($edition, 0, 1) == "A")
-    return statsParDate(["$annee-08-01", "$annee-12-31"]);
-  return statsParDate(["$annee-01-01", "$annee-07-31"]);
+function statsByEdition($edition) {
+  $year = '20' . substr($edition, 1, 2);
+  $semester = substr($edition, 0, 1);
+  $interval = $semester == 'A' ? ["$year-08-01", "$year-12-31"] : ["$year-01-01", "$year-07-31"];
+  return statsByDate($interval);
 }
 
-function statistiquesTransaction($date, $typeTransaction) {
-  $query = "SELECT COUNT(*) AS quantite,
-                   SUM(exemplaire.prix) AS montant
+function statistiquesTransaction($date, $transactionType) {
+  $query = "SELECT COUNT(*) AS quantity,
+                   SUM(copy.price) AS amount
             FROM transaction
-            INNER JOIN exemplaire
-              ON transaction.id_exemplaire=exemplaire.id
-            WHERE id_type=$typeTransaction ";
+            INNER JOIN copy
+              ON transaction.copy=copy.id
+            WHERE type=$transactionType ";
+  $query .= is_array($date) ? "AND date>='$date[0]' AND date<='$date[1]';" : "AND date='$date';" ;
 
-  if(is_array($date)) {
-    $query .= "AND date>='$date[0]' AND date<='$date[1]';";
-  } else {
-    $query .= "AND date='$date';";
-  }
-
-  include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
+  mysqli_close($connection);
 
   $stats = [
-    "quantite" => $row['quantite'],
-    "montant" => $row['montant']
+    'quantite' => $row['quantity'],
+    'montant' => $row['amount']
   ];
 
-  mysqli_close($connection);
   return $stats;
 }
 
 function economieParentEtudiant($date) {
-  $query = "SELECT exemplaire.prix
+  $query = "SELECT copy.price
             FROM transaction
-            INNER JOIN exemplaire
-              ON transaction.id_exemplaire=exemplaire.id
-            WHERE id_type=3 ";
+            INNER JOIN copy
+              ON transaction.copy=copy.id
+            WHERE type=3 ";
+  $query .= is_array($date) ? "AND date>='$date[0]' AND date<='$date[1]';" : "AND date='$date';" ;
 
-  if(is_array($date)) {
-    $query .= "AND date>='$date[0]' AND date<='$date[1]';";
-  } else {
-    $query .= "AND date='$date';";
-  }
+  include '../../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
-  include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
-
-  $economie = 0;
-
+  $savings = 0;
   while($row = mysqli_fetch_assoc($result)) {
-    $economie += ceil($row['prix']/2);
+    $savings += ceil($row['price']/2);
   }
 
   mysqli_close($connection);
-  return $economie;
+  return $savings;
 }
 
 function argentTotalARemettre($compteActif) {
   $members = getMembreAvecRemise($compteActif);
   $total = 0;
 
-  foreach ($members as &$member) {
-    $montant = ArgentRemettreParMembre($member['no']);
-    $member['montant'] = $montant;
+  foreach ($members as $member) {
+    $amount = ArgentRemettreParMembre($member['no']);
+    $member['montant'] = $amount;
 
-    if($member['montant'] == 0) {
+    if ($member['montant'] == 0) {
       unset($members[$member['no']]);
     } else {
      $total += $member['montant'];
@@ -111,32 +99,26 @@ function argentTotalARemettre($compteActif) {
 
 function getMembreAvecRemise($compteActif) {
   $date = (Date('Y') - 1) . "-" . Date('m') . "-" . Date('d');
-  $symb = '<=';
+  $symb = $compteActif ? '>=' : '<=';
 
-  if($compteActif)
-    $symb = '>=';
-
-  $query = "SELECT no, prenom, nom
-            FROM membre
+  $query = "SELECT no, first_name, last_name
+            FROM member
             INNER JOIN transaction
-              ON membre.no=transaction.no_membre
-            WHERE derniere_activite$symb'$date'
+              ON member.no=transaction.member
+            WHERE last_activity $symb '$date'
             ORDER BY nom, prenom, no;";
 
-  include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   $members = [];
-
   while($row = mysqli_fetch_assoc($result)) {
-    $member = [
+    $members[$row['no']] = [
       'no' => $row['no'],
-      'nom' => utf8_encode($row['nom']),
-      'prenom' => utf8_encode($row['prenom']),
+      'nom' => utf8_encode($row['first_name']),
+      'prenom' => utf8_encode($row['last_name']),
       'montant' => 0
     ];
-
-    $members[$row['no']] = $member;
   }
 
   mysqli_close($connection);
@@ -144,62 +126,58 @@ function getMembreAvecRemise($compteActif) {
 }
 
 function ArgentRemettreParMembre($memberNo) {
-  $query = "SELECT SUM(exemplaire.prix) AS montant
+  $query = "SELECT SUM(copy.prix) AS amount
             FROM transaction
-            INNER JOIN exemplaire
-              ON transaction.id_exemplaire=exemplaire.id
+            INNER JOIN copy
+              ON transaction.copy=copy.id
             WHERE no_membre=$memberNo
-              AND (transaction.id_type=2
-                  OR transaction.id_type=3)
-              AND id_exemplaire NOT IN(SELECT id_exemplaire
+              AND (transaction.type=2
+                  OR transaction.type=3)
+              AND copy NOT IN(SELECT copy
                                        FROM transaction
-                                       WHERE no_membre=$memberNo
-                                       AND id_type=4);";
+                                       WHERE member=$memberNo
+                                       AND type=4);";
 
-   include "../../#/connection.php";
-   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+   include '../../#/connection.php';
+   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
    $row = mysqli_fetch_assoc($result);
-
-   $montant = $row['montant'];
    mysqli_close($connection);
 
-   if ($montant == null)
-     $montant = 0;
-   return $montant;
+   return $row['amount'] == null ? 0 : $row['amount'];
 }
 
 function getActifPassifBLU() {
   return [
-    "actif" => compteBLU(true),
-    "passif" => compteBLU(false)
+    'actif' => compteBLU(true),
+    'passif' => compteBLU(false)
   ];
 }
 
 function compteBLU($actif) {
   $date = (Date('Y') - 1) . "-" . Date('m') . "-" . Date('d');
-  $typeTransaction = "WHERE transaction.id_type=1 AND exemplaire.id NOT IN(SELECT id_exemplaire FROM transaction WHERE id_type=2 OR id_type=3)";
+  $typeTransaction = "WHERE transaction.type=1 AND copy.id NOT IN(SELECT copy FROM transaction WHERE type=2 OR type=3)";
 
   if($actif) {
-    $typeTransaction = "WHERE (transaction.id_type=2 OR transaction.id_type=3) AND exemplaire.id NOT IN(SELECT id_exemplaire FROM transaction WHERE id_type=4)";
+    $typeTransaction = "WHERE (transaction.type=2 OR transaction.type=3) AND copy.id NOT IN(SELECT copy FROM transaction WHERE type=4)";
   }
 
-  $query = "SELECT SUM(exemplaire.prix) AS montant,
-                   COUNT(exemplaire.prix) AS quantite
-            FROM exemplaire
+  $query = "SELECT SUM(copy.price) AS amount,
+                   COUNT(copy.price) AS quantity
+            FROM copy
             INNER JOIN transaction
-              ON exemplaire.id=transaction.id_exemplaire
+              ON copy.id=transaction.copy
             INNER JOIN membre
-              ON transaction.no_membre=membre.no
+              ON transaction.member=member.no
             $typeTransaction
-            AND transaction.no_membre IN(SELECT no FROM membre WHERE derniere_activite>='$date');";
+            AND transaction.member IN(SELECT no FROM member WHERE last_activity>='$date');";
 
-  include "../../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '../../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
 
   $data = [
-    "montant" => $row['montant'],
-    "quantite" => $row['quantite']
+    'montant' => $row['amount'],
+    'quantite' => $row['quantity']
   ];
 
   mysqli_close($connection);
@@ -207,45 +185,34 @@ function compteBLU($actif) {
 }
 
 function livresValidesNonVendus() {
-  $query = "SELECT article.*, pv.valeur AS categorie
-            FROM article
-            INNER JOIN propriete_article pa
-              ON article.id=pa.id_article
-            INNER JOIN propriete_valeur pv
-              ON pa.id_propriete_valeur=pv.id
-            WHERE article.id
-              NOT IN(SELECT DISTINCT(exemplaire.id_article)
-                     FROM exemplaire
-                     INNER JOIN transaction
-                      ON exemplaire.id = transaction.id_exemplaire
-                     WHERE (transaction.id_type=2 OR transaction.id_type=3)
-                     AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR)))
-            AND article.id
-              NOT IN (SELECT pa.id_article
-                      FROM propriete_article pa
-                      INNER JOIN propriete_valeur pv
-                        ON pa.id_propriete_valeur=pv.id
-                      WHERE pv.id_propriete=15
-                      AND pv.valeur IS NOT NULL)
-            AND pv.id_propriete=8
-            AND pv.id != 5092";
+  $query = "SELECT item.id, item.name, subject.name, category.name
+            FROM item
+            INNER JOIN subject
+              ON item.subject=subject.id
+            INNER JOIN category
+              ON subject.category=category.id
+            WHERE item.status=(SELECT id FROM status WHERE code='VALID')
+            AND article.id NOT IN(SELECT DISTINCT(copy.item)
+                                  FROM copy
+                                  INNER JOIN transaction
+                                    ON copy.id=transaction.copy
+                                  WHERE (transaction.type=2 OR transaction.type=3)
+                                  AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR)));";
 
-    include "../../#/connection.php";
-    $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+    include '../../#/connection.php';
+    $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
-    $articles = [];
-
+    $items = [];
     while($row = mysqli_fetch_assoc($result)) {
-      $article = [
+      $items[$row['id']] = [
         'id' => $row['id'],
-        'title' => $row['nom'],
-        'category' => $row['categorie']
+        'title' => $row['name'],
+        'subject' => $row['subject'],
+        'category' => $row['category']
       ];
-
-      $articles[$row['id']] = $article;
     }
 
     mysqli_close($connection);
-    return $articles;
+    return $items;
 }
 ?>

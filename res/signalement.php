@@ -1,14 +1,13 @@
 <?php
 if (isset($_POST['signal']) && isset($_POST['article']) && isset($_POST['memberNo'])) {
-  $error = $_POST["signal"];
-  $memberNo = $_POST['memberNo'];
-  $articleId = $_POST["article"];
-  $date = date("Y-m-d H:i:s");
+  $error = $_POST['signal'];
+  $member = $_POST['memberNo'];
+  $item = $_POST['article'];
 
-  $query = "INSERT INTO erreur (description, no_membre, id_article, date)
-            VALUES ('$error', $memberNo, $articleId, '$date')";
+  $query = "INSERT INTO error (description, member, item, date)
+            VALUES ('$error', $member, $item, CURRENT_TIMESTAMP)";
 
-  include "../#/connection.php";
+  include '../#/connection.php';
   mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
   mysqli_close($connection);
 

@@ -27,5 +27,7 @@ if (isset($_POST['name']) && $_POST['email'] && $_POST['message'] && $_POST['sub
   mail($email, $confirmationSubject, $confirmationMessage, $clientHeaders);
 
   return header("Location: ../contact.php?sent=true");
-} return header("Location: ../contact.php?error=403&sent=false");
+}
+
+return header("Location: ../contact.php?error=403&sent=false");
 ?>

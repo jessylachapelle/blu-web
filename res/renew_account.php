@@ -2,9 +2,10 @@
 session_start ();
 
 if(isset($_SESSION['memberNo'])) {
-  $query = "UPDATE membre
-            SET derniere_activite=CURRENT_TIMESTAMP
-            WHERE no=" . $_SESSION['memberNo'];
+  $no = $_SESSION['memberNo'];
+  $query = "UPDATE member
+            SET last_activity=CURRENT_TIMESTAMP
+            WHERE no=$no;";
 
   include "../#/connection.php";
   mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());

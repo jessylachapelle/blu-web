@@ -4,10 +4,10 @@ if (isset($_POST['email']) && isset($_POST['memberNo']) &&
   $memberNo = $_POST['memberNo'];
   $email = $_POST['email'];
 
-  $query = "SELECT no, courriel AS email
-            FROM membre
+  $query = "SELECT no, email
+            FROM member
             WHERE no LIKE '%$memberNo'
-            AND courriel='$email'";
+            AND email='$email'";
 
   include "../#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
