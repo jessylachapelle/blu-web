@@ -143,20 +143,25 @@ $htmlStr .= $member->getCourriel() . "</p>
 $nbArticle = 0;
 $htmlTableStr = "";
 
-foreach($itemFeed AS $e) {
-  $nbArticle++;
+foreach($itemFeed AS $item) {
+  $id = $item['id'];
+  $title = $item['title'];
+  $quantity = $item['inStock'];
 
-  if($e->getPrice() > 0)
-    $htmlTableStr .= "<tr class='enstock' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
-  else
-    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
+  if ($inStock > 0) {
+    $htmlTableStr .= "<tr class='enstock' data-article='$id' onclick='openArticle(this)'>";
+  } else {
+    $htmlTableStr .= "<tr data-article='$id' onclick='openArticle(this)'>";
+  }
 
-  $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
-                    <td>" . $e->getPrice() . "</td>
+  $htmlTableStr .= "<td>$title</td>
+                    <td>$quantity</td>
                     </tr></div>";
+
+  $nbArticle++;
 }
 
-if($nbArticle > 0)
+if ($nbArticle > 0) {
   $htmlStr .= "<section>
                 <h2>Artciles suivis</h2>
                 <div class='table-wrapper'>
@@ -173,6 +178,7 @@ if($nbArticle > 0)
                   </table>
                 </div>
               </section>";
+}
 
 // ARTICLES À VENDRE
 $nbArticle = 0;
@@ -434,17 +440,15 @@ function getItemFeed($memberNo) {
               ON item_feed.item=item.id
             WHERE member=$memberNo;";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   while($row = mysqli_fetch_assoc($result)) {
-    $copy = new Exemplaire();
-
-    $copy->setArticle($row['id']);
-    $copy->setTitle($row['name']);
-    $copy>setPrice(getAmountInStock($copy->getArticle()));
-
-    array_push($items, $copy);
+    array_push($items, [
+      'id' => $row['id'],
+      'title' => $row['name'],
+      'inStock' => getAmountInStock($row['id'])
+    ]);
   }
 
   return $items;
@@ -468,7 +472,7 @@ function getTotalInventory($itemId) {
   return $row['count'];
 }
 
-function gotAmountSold($itemId) {
+function getAmountSold($itemId) {
   $query = "SELECT COUNT(*) AS count
             FROM transaction
             INNER JOIN copy
@@ -487,7 +491,7 @@ function gotAmountSold($itemId) {
 }
 
 function getAmountInStock($idArticle) {
-  return (getTotalInventory($idArticle) - gotAmountSold($idArticle));
+  return (getTotalInventory($idArticle) - getAmountSold($idArticle));
 }
 
 function getTransactionDate($copyId, $transactionType) {
