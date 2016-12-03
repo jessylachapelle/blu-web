@@ -133,8 +133,8 @@ function slideoutMenu() {
 function search(event) {
 	event.preventDefault();
 
-  const data = new FormData();
-  data.append('search-data', event.target.search.value);
+	const data = new FormData();
+	data.append('search-data', event.target.search.value);
 	articles = {
 		tout: {},
 		titre: {},
@@ -144,6 +144,7 @@ function search(event) {
 
 	HTTP.call('POST', 'res/search_query.php', data, (res) => {
 		articles.tout = JSON.parse(res);
+		console.log(articles.tout);
 
 		Object.keys(articles.tout).forEach((id) => {
 			const article = articles.tout[id];
@@ -188,6 +189,10 @@ function displayResults(filtre) {
 	headRow.appendChild(headEditor);
 	thead.appendChild(headRow);
 	table.appendChild(thead);
+
+	if (!articles || !articles[filtre]) {
+		return;
+	}
 
 	Object.keys(articles[filtre]).forEach((id) => {
 		const article = articles[filtre][id];
@@ -317,8 +322,8 @@ function eventHandlers() {
 	if (document.getElementById('search-form')) {
 		document.getElementById('search-form').addEventListener('submit', search);
 
-		const filters = document.forms['search-form'].elements['filtre'];
-		for (let i = 0; i < filters.length; i++) {
+		const filtres = document.getElementsByName('filtre');
+		for (let i = 0; i < filtres.length; i++) {
 			filtres[i].addEventListener('change', (event) => {
 				displayResults(event.target.value);
 			});
