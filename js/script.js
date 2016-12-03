@@ -16,17 +16,19 @@ function getXMLHttpRequest() {
 	return xmlhttp;
 }
 
-const HTTP = (method, url, data, callback) => {
-	const xmlhttp = new getXMLHttpRequest();
+const HTTP = {
+	call: (method, url, data, callback) => {
+		const xmlhttp = new getXMLHttpRequest();
 
-	xmlhttp.onreadystatechange = () => {
-		if (xmlhttp.readyState == 4) {
-			callback(xmlhttp.responseText);
+		xmlhttp.onreadystatechange = () => {
+			if (xmlhttp.readyState == 4) {
+				callback(xmlhttp.responseText);
+			}
 		}
-	}
 
-	xmlhttp.open(method, url, true);
-	xmlhttp.send(data);
+		xmlhttp.open(method, url, true);
+		xmlhttp.send(data);
+	}
 }
 
 function getParameterByName(name, url) {
@@ -131,8 +133,8 @@ function slideoutMenu() {
 function search(event) {
 	event.preventDefault();
 
-  const data = new FormData();
-  data.append('search-data', event.target.search.value);
+	const data = new FormData();
+	data.append('search-data', event.target.search.value);
 	articles = {
 		tout: {},
 		titre: {},
@@ -140,7 +142,7 @@ function search(event) {
 		editeur: {}
 	};
 
-	HTTP('POST', 'res/search_query.php', data, (res) => {
+	HTTP.call('POST', 'res/search_query.php', data, (res) => {
 		articles.tout = JSON.parse(res);
 
 		Object.keys(articles.tout).forEach((id) => {
@@ -187,6 +189,10 @@ function displayResults(filtre) {
 	thead.appendChild(headRow);
 	table.appendChild(thead);
 
+	if (!articles || !articles[filtre]) {
+		return;
+	}
+
 	Object.keys(articles[filtre]).forEach((id) => {
 		const article = articles[filtre][id];
 
@@ -219,11 +225,15 @@ function subscribe(e) {
 	const data = new FormData();
 
 	data.append('memberNo', memberNo);
-	data.append('articleId', e.getAttribute('data-article'));
+	data.append('itemId', e.getAttribute('data-item'));
 	data.append('f', state);
 
-	HTTP('POST', 'res/article_subscription.php', data, (res) => {
-		e.setAttribute('data-state', state);
+	HTTP.call('POST', 'res/article_subscription.php', data, (res) => {
+		if (res) {
+			e.setAttribute('data-state', state);
+		} else {
+			console.log(res);
+		}
 	});
 }
 
@@ -290,7 +300,7 @@ function verifyCoordonates(event) {
   data.append('ville', event.target.ville.value);
   data.append('province', event.target.province.value);
 
-	HTTP('POST', 'res/mise_a_jour.php', data, () => {
+	HTTP.call('POST', 'res/mise_a_jour.php', data, () => {
 		document.location.href = 'index.php';
 	});
 }
@@ -311,8 +321,8 @@ function eventHandlers() {
 	if (document.getElementById('search-form')) {
 		document.getElementById('search-form').addEventListener('submit', search);
 
-		const filters = document.forms['search-form'].elements['filtre'];
-		for (let i = 0; i < filters.length; i++) {
+		const filtres = document.getElementsByName('filtre');
+		for (let i = 0; i < filtres.length; i++) {
 			filtres[i].addEventListener('change', (event) => {
 				displayResults(event.target.value);
 			});

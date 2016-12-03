@@ -143,20 +143,25 @@ $htmlStr .= $member->getCourriel() . "</p>
 $nbArticle = 0;
 $htmlTableStr = "";
 
-foreach($itemFeed AS $e) {
-  $nbArticle++;
+foreach($itemFeed AS $item) {
+  $id = $item['id'];
+  $title = $item['title'];
+  $quantity = $item['inStock'];
 
-  if($e->getPrice() > 0)
-    $htmlTableStr .= "<tr class='enstock' data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
-  else
-    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openArticle(this)'>";
+  if ($inStock > 0) {
+    $htmlTableStr .= "<tr class='enstock' data-article='$id' onclick='openArticle(this)'>";
+  } else {
+    $htmlTableStr .= "<tr data-article='$id' onclick='openArticle(this)'>";
+  }
 
-  $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
-                    <td>" . $e->getPrice() . "</td>
+  $htmlTableStr .= "<td>$title</td>
+                    <td>$quantity</td>
                     </tr></div>";
+
+  $nbArticle++;
 }
 
-if($nbArticle > 0)
+if ($nbArticle > 0) {
   $htmlStr .= "<section>
                 <h2>Artciles suivis</h2>
                 <div class='table-wrapper'>
@@ -173,6 +178,7 @@ if($nbArticle > 0)
                   </table>
                 </div>
               </section>";
+}
 
 // ARTICLES À VENDRE
 $nbArticle = 0;
@@ -311,8 +317,8 @@ function getMembre($no) {
               ON city.state=state.code
             WHERE member.no=$no;";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
   mysqli_close($connection);
 
@@ -338,8 +344,8 @@ function getTelephone($memberNo) {
 
   $query = "SELECT id, number, note FROM phone WHERE member=$memberNo;";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   while($row = mysqli_fetch_assoc($result)) {
     $phone = new Telephone();
@@ -356,23 +362,25 @@ function getTelephone($memberNo) {
 }
 
 function getCopiesInStock($memberNo) {
-  return getCopies($memberNo, 1);
+  return getCopies($memberNo, 'ADD');
 }
 
 function getCopiesSold($memberNo) {
-  $copies = getCopies($memberNo, 2);
+  $copies = getCopies($memberNo, 'SELL');
 
-  foreach($copies as $copy)
-    $copy->setDateAdded(getTransactionDate($copy->getId(), 1));
+  foreach($copies as $copy) {
+    $copy->setDateAdded(getTransactionDate($copy->getId(), 'ADD'));
+  }
+
   return $copies;
 }
 
 function getCopiesPaid($memberNo) {
-  $copies = getCopies($memberNo, 4);
+  $copies = getCopies($memberNo, 'PAY');
 
   foreach($copies as $copy) {
-    $copy->setDateAdded(getTransactionDate($copy->getId(), 1));
-    $copy->setDateSold(getTransactionDate($copy->getId(), 2));
+    $copy->setDateAdded(getTransactionDate($copy->getId(), 'ADD'));
+    $copy->setDateSold(getTransactionDate($copy->getId(), 'SELL'));
   }
 
   return $copies;
@@ -393,21 +401,21 @@ function getCopies($memberNo, $transactionType) {
               ON copy.item=item.id
             WHERE transaction.member=$memberNo";
 
-  if ($transactionType == 2 || $transactionType == 3) {
-    $query .= " AND (type=2 OR type=3)";
-    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND type=4)";
+  if (preg_match("/SELL/i", $transactionType)) {
+    $query .= " AND type IN (SELECT id FROM transaction_type WHERE code LIKE 'SELL%')";
+    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND type IN (SELECT id FROM transaction_type WHERE code='PAY' or code='DONATE'))";
   } else {
-    $query .= " AND type=$transactionType";
+    $query .= " AND type=(SELECT id FROM transaction_type WHERE code='$transactionType')";
   }
 
-  if ($transactionType == 1) {
-    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND (type=2 OR type=3))";
+  if ($transactionType == 'ADD') {
+    $query .= " AND copy NOT IN(SELECT copy FROM transaction WHERE member=$memberNo AND type IN (SELECT id FROM transaction_type WHERE code LIKE 'SELL%'))";
   }
 
-  $query .= " ORDER BY item_name";
+  $query .= ' ORDER BY item_name;';
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   while($row = mysqli_fetch_assoc($result)) {
     $copy = new Exemplaire();
@@ -434,17 +442,15 @@ function getItemFeed($memberNo) {
               ON item_feed.item=item.id
             WHERE member=$memberNo;";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   while($row = mysqli_fetch_assoc($result)) {
-    $copy = new Exemplaire();
-
-    $copy->setArticle($row['id']);
-    $copy->setTitle($row['name']);
-    $copy>setPrice(getAmountInStock($copy->getArticle()));
-
-    array_push($items, $copy);
+    array_push($items, [
+      'id' => $row['id'],
+      'title' => $row['name'],
+      'inStock' => getAmountInStock($row['id'])
+    ]);
   }
 
   return $items;
@@ -458,17 +464,17 @@ function getTotalInventory($itemId) {
             INNER JOIN item
               ON copy.item=item.id
             WHERE item.id=$itemId
-            AND transaction.type=1";
+            AND transaction.type=(SELECT id FROM transaction_type WHERE code='VALID');";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
   mysqli_close($connection);
 
   return $row['count'];
 }
 
-function gotAmountSold($itemId) {
+function getAmountSold($itemId) {
   $query = "SELECT COUNT(*) AS count
             FROM transaction
             INNER JOIN copy
@@ -476,10 +482,13 @@ function gotAmountSold($itemId) {
             INNER JOIN item
               ON copy.item=item.id
             WHERE item.id=$itemId
-            AND (transaction.type=2 OR transaction.type=3)";
+            AND transaction.type IN (SELECT id
+                                     FROM transaction_type
+                                     WHERE code
+                                     LIKE 'SELL%');";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
   mysqli_close($connection);
 
@@ -487,20 +496,20 @@ function gotAmountSold($itemId) {
 }
 
 function getAmountInStock($idArticle) {
-  return (getTotalInventory($idArticle) - gotAmountSold($idArticle));
+  return (getTotalInventory($idArticle) - getAmountSold($idArticle));
 }
 
 function getTransactionDate($copyId, $transactionType) {
-  $query = "";
+  $query;
 
-  if ($transactionType == 2 || $transactionType == 3) {
-    $query = "SELECT date FROM transaction WHERE copy=$copyId AND (type=2 OR type=3)";
+  if (preg_match("/SELL/i", $transactionType)) {
+    $query = "SELECT date FROM transaction WHERE copy=$copyId AND type IN (SELECT id FROM transaction_type WHERE code LIKE 'SELL%');";
   } else {
-    $query = "SELECT date FROM transaction WHERE copy=$copyId AND type=$transactionType";
+    $query = "SELECT date FROM transaction WHERE copy=$copyId AND type=(SELECT id FROM transaction_type WHERE code='$transactionType')";
   }
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
   mysqli_close($connection);
 
@@ -512,8 +521,8 @@ function itemIsOutdated($itemId) {
             FROM item WHERE id=$itemId
             AND status=(SELECT id FROM status WHERE code='VALID');";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
   $row = mysqli_fetch_assoc($result);
   mysqli_close($connection);
 

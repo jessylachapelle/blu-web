@@ -9,15 +9,16 @@
 require_once 'lib/mobileDetect.php';
 $device = new Mobile_Detect;
 
-if($device->isTablet()) {
-  include  "inc/mhead.php";
-  echo "<link rel='stylesheet/less' href='css/mobile.less' media='(orientation : portrait)' />
-        <link rel='stylesheet/less' href='css/desktop.less' media='(orientation : landscape)' />";
-} elseif($device->isMobile()) {
-  include  "inc/mhead.php";
-  echo "<link rel='stylesheet/less' href='css/mobile.less' />";
-} else
-  echo "<link rel='stylesheet/less' href='css/desktop.less' />";
+if ($device->isTablet()) {
+  include  'inc/mhead.php';
+  echo '<link rel="stylesheet/less" href="css/mobile.less" media="(orientation : portrait)" />
+        <link rel="stylesheet/less" href="css/desktop.less" media="(orientation : landscape)" />';
+} else if ($device->isMobile()) {
+  include  'inc/mhead.php';
+  echo '<link rel="stylesheet/less" href="css/mobile.less"/>';
+} else {
+  echo '<link rel="stylesheet/less" href="css/desktop.less" />';
+}
 ?>
 <script src="js/jquery.js"></script>
 <script src="js/slideout.js"></script>
