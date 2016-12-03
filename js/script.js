@@ -144,7 +144,6 @@ function search(event) {
 
 	HTTP.call('POST', 'res/search_query.php', data, (res) => {
 		articles.tout = JSON.parse(res);
-		console.log(articles.tout);
 
 		Object.keys(articles.tout).forEach((id) => {
 			const article = articles.tout[id];
