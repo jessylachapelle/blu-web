@@ -46,8 +46,10 @@ function getArticleStats($articleId) {
               ON transaction.copy=copy.id
             WHERE copy.item=$articleId
               AND transaction.copy NOT IN(SELECT transaction.copy
-                                                   FROM transaction
-                                                   WHERE type=2 OR type=3)";
+                                          FROM transaction
+                                          WHERE type IN (SELECT id
+                                                         FROM transaction_type
+                                                         WHERE code LIKE 'SELL%')";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
