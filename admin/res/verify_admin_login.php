@@ -10,14 +10,15 @@ if (isset($_POST['user']) && isset($_POST['password'])) {
 
   include '../../#/connection.php';
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
+  $row = mysqli_fetch_assoc($result);
 
-  while($row = mysqli_fetch_assoc($result)) {
+  if (isset($row['username'])) {
     session_start ();
 
-    $_SESSION['user'] = $row['user'];
+    $_SESSION['user'] = $row['username'];
     $_SESSION['expire'] = null;
 
-    if(!isset($_POST['connection'])) {
+    if (!isset($_POST['connection'])) {
       $_SESSION['requiredt'] = time();
       $_SESSION['expire'] = $_SESSION['requiredt'] + (1800);
     }
@@ -31,7 +32,7 @@ return redirect(401, $_POST['url']);
 function redirect($code, $POST_URL) {
   $url = explode('?', $POST_URL)[0];
 
-  if($code == 200) {
+  if ($code == 200) {
     header("Location: $url");
   } else {
     header("Location: $url?error=$code");

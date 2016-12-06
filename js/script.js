@@ -347,7 +347,10 @@ var articles;
 var tooltip;
 var r = getParameterByName('r');
 
-slideoutMenu();
+if (window.Slideout) {
+	slideoutMenu();
+}
+
 eventHandlers();
 
 if (r && document.getElementById('recherche') && document.getElementById('btn-recherche')) {

@@ -9,7 +9,7 @@
       <?php
       session_start();
 
-      if(isset($_SESSION['user']) && ($_SESSION['expire'] == null || time() < $_SESSION['expire'])) {
+      if (isset($_SESSION['user']) && ($_SESSION['expire'] == null || time() < $_SESSION['expire'])) {
         include 'res/ui_admin.php';
       } else {
         include 'res/ui_admin_login.php';
