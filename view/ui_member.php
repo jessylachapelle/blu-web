@@ -96,7 +96,7 @@
   </a>
 </h1>
 <div>
-  <button>Vendre des Livres</button>
+  <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
   <button id='btnRenew'>Renouveler mon compte</button>
   <script>
     document.getElementById('btnRenew').addEventListener('click', (event) => {
