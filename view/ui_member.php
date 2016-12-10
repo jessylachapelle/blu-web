@@ -95,6 +95,24 @@
     <span class='oi' data-glyph='account-logout'></span>
   </a>
 </h1>
+<div>
+  <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
+  <button id='btnRenew'>Renouveler mon compte</button>
+  <script>
+    document.getElementById('btnRenew').addEventListener('click', (event) => {
+      event.preventDefault;
+      HTTP.call('GET', 'res/renew_account.php', null, (res) => {
+        const response = JSON.parse(res);
+        if (response.code === 200) {
+          const button = event.target;
+          button.innerHTML = 'Compte renouvelé';
+          button.setAttribute('disabled', 'disabled');
+          button.setAttribute('class', 'desactive');
+        }
+      });
+		});
+  </script>
+</div>
 <section class='inline'>
     <p><b>État du compte :</b></p>
     <table id='infocompte'>
@@ -111,14 +129,9 @@
         <td><?php echo $member->getDateDesactivation(); ?></td>
       </tr>
     </table>
+</section>
 
 <?php
-if (isset($_GET['renouvele']) && $_GET['renouvele'] == true) {
-  echo "<button id='btnrenouv' class='desactive' disabled=''>Compte renouvelé</button>";
-} else {
-  echo "<form class='nostyle' action='res/renew_account.php'><button id='btnrenouv'>Renouveler le compte</button></form></section>";
-}
-
 // COORDONNÉES
 $htmlStr = "<section class='inline'>
               <p><b>Coordonnées :</b></p>
@@ -136,8 +149,9 @@ if($member->getTelephone() != null) {
   }
 }
 
-$htmlStr .= $member->getCourriel() . "</p>
-            <button onclick='miseAJourCompte()'>Mettre à jour</button></section>";
+$htmlStr .= $member->getCourriel() . "</p>" .
+            // "<button onclick='miseAJourCompte()'>Mettre à jour</button>" .
+            "</section>";
 
 // ARTICLE SUIVI
 $nbArticle = 0;

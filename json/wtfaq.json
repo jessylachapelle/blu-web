@@ -11,7 +11,7 @@
     },
     {
       "question": "Comment savoir si mes livres ont été vendus ?",
-      "answer": "Il vous suffit d’accéder à la page sommaire de votre compte. Si nous vous devons de l’argent, le message « Nous vous devons x $. » sera inscrit au centre de la première page-écran, dans le cas contraire, le message « Vous n’avez vendu aucun livre depuis votre dernier passage. » s’affichera."
+      "answer": "Il vous suffit d’accéder à votre compte par ce site. Si nous vous devons de l’argent, vous verrez un message avec le montant que nous vous devons."
     },
     {
       "question": "Comment récupérer l’argent que l’AECS me doit ?",
@@ -19,7 +19,7 @@
     },
     {
       "question": "Comment renouveler mon compte ?",
-      "answer": "Votre compte se renouvèle automatiquement pour une période d’un (1) an lorsque vous réclamez l’argent que l’AECS vous doit et lorsque vous ajoutez des livres à vendre. Vous pouvez aussi nous contacter afin de nous demander explicitement de renouveler votre compte."
+      "answer": "Votre compte se renouvèle automatiquement pour une période d’un (1) an lorsque vous réclamez l’argent que l’AECS vous doit et lorsque vous ajoutez des livres à vendre. Vous pouvez aussi aller sur votre compte et cliquer le bouton 'Renouveler mon compte' ou encore nous contacter afin de nous demander explicitement de renouveler votre compte."
     }
   ],
   "note": "Pour toute autre question, n’hésitez pas à nous contacter, nous nous ferons un plaisir de vous répondre."

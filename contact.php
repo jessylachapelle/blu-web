@@ -19,7 +19,7 @@
 				</div>
 				<div class="fieldWrapper">
 					<label for="subject">Sujet<span class="required">*</span></label>
-					<input id="subject" name ="nom" type="text" required="" />
+					<input id="subject" name ="subject" type="text" required="" />
 				</div>
 				<label for="message">Message<span class="required">*</span></label>
 				<textarea id="message" name="message"  rows="10" cols="50" required=""></textarea>
