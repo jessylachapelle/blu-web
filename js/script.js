@@ -1,19 +1,14 @@
 // Fonction AJAX
 function getXMLHttpRequest() {
-	var xmlhttp = null;
-
-	if (window.XMLHttpRequest || window.ActiveXObject) {
-		if (window.ActiveXObject) {
-			try {
-				xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
-			} catch (e) {
-				xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-			}
-		} else {
-			xmlhttp = new XMLHttpRequest();
+	if (window.ActiveXObject) {
+		try {
+			return new ActiveXObject('Msxml2.XMLHTTP');
+		} catch (e) {
+			return new ActiveXObject('Microsoft.XMLHTTP');
 		}
 	}
-	return xmlhttp;
+
+	return window.XMLHttpRequest ?  new XMLHttpRequest() : null;
 }
 
 const HTTP = {

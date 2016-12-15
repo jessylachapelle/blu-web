@@ -2,50 +2,64 @@
 <p><b id="actionTexte">Vous pouvez ajouter une nouvelle au site à l'aide de ce formulaire.</b></p>
 
 <form action="res/poste_nouvelle.php" method="post" class="nostyle">
-  <input type="hidden" name="id_nouvelle" id="id_nouvelle" value="0">
-  <label for="titre">Titre :</label>
-  <input type="textbox" name="titre" id="titre" />
+  <input type="hidden" name="id" id="id" value="0">
+  <label for="title">Titre :</label>
+  <input type="text" name="title" id="title" />
   <label for="message">Message :</label><br/>
   <textarea cols="50"; rows="10"; name="message" id="message"></textarea><br/>
-  <label for="debut">Date de début :</label>
-  <input type="date" name="debut" id="debut" />
-  <label for="fin">Date de fin :</label>
-  <input type="date" name="fin" id="fin" />
+  <label for="startDate">Date de début :</label>
+  <input type="date" name="startDate" id="startDate" />
+  <label for="endDate">Date de fin :</label>
+  <input type="date" name="endDate" id="endDate" />
   <button onclick="resetText()" type="reset">Annuler</button>
-  <button>Enregistrer</button>
+  <button type="submit">Enregistrer</button>
 </form>
-<table  class='tablesorter'>
-  <thead>
-    <tr>
-      <th>Titre</th>
-      <th>Message</th>
-      <th>Date début</th>
-      <th>Date fin</th>
-      <th>Delete</th>
-    </tr>
-  </thead>
-  <tbody>
+<?php
+$newsFeed = getNewsfeed();
 
-    <?php
-    include "../#/connection.php";
-    $query = 'SELECT * FROM nouvelle ORDER BY id DESC;';
-    $result = mysqli_query($connection, $query)or die ("Query failed: '" . $query . "' " . mysqli_error());;
+if (count($newsFeed) > 0) { ?>
+  <table  class='tablesorter'>
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Message</th>
+        <th>Date début</th>
+        <th>Date fin</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($newsFeed as $news) {
+        $id = $news['id'];
+        $title = $news['title'];
+        $message = $news['message'];
+        $startDate = date('Y/m/d', strtotime($news['start_date']));
+        $endDate = $news['end_date'] != "0000-00-00" ? date('Y/m/d', strtotime($news['end_date'])) : '';
+      ?>
+        <tr id="nouvelle_<?php echo $id; ?>">
+          <td onclick="modifier_nouvelle(<?php echo $id; ?>)"><?php echo $title; ?></td>
+          <td onclick="modifier_nouvelle(<?php echo $id; ?>)"><?php echo $message; ?></td>
+          <td onclick="modifier_nouvelle(<?php echo $id; ?>)"><?php echo $startDate; ?></td>
+          <td onclick="modifier_nouvelle(<?php echo $id; ?>)"><?php echo $endDate; ?></td>
+          <td>
+            <a href="res/delete_nouvelle.php?id_nouvelle=<?php echo $id; ?>">
+              <span class="oi" data-glyph="trash"></span>
+            </a>
+          </td>
+        </tr>
+      <?php } ?>
+    </tbody>
+  </table>
+<?php } else { ?>
+  <p>Vous n'avez aucune nouvelle de publiée</p>
+<?php } ?>
 
-      for ($i=0; $i<5; $i++)
-      {
-        if($row = mysqli_fetch_array($result))
-        {
-    ?>
-    <tr id="nouvelle_<?php echo $row['id'] ?>">
-      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['titre']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['message']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php echo $row['debut']; ?></td>
-      <td onclick="modifier_nouvelle(<?php echo $row['id']?>)"><?php if ($row['fin'] != "0000-00-00") echo $row['fin']; ?></td>
-      <td><?php echo '<a href="res/delete_nouvelle.php?id_nouvelle=' . $row['id'] . '">'; ?><span class="oi" data-glyph="trash"></span></a></td>
-    </tr>
-    <?php
-       }
-      }
-    ?>
-  </tbody>
-</table>
+<?php
+function getNewsfeed() {
+  $query = 'SELECT * FROM news ORDER BY start_date ASC, end_date ASC, title ASC;';
+  include '../#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
+  mysqli_close($connection);
+  return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+?>

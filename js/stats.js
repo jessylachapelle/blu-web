@@ -1,52 +1,53 @@
-"use strict";
-var editionSelectors = document.getElementsByClassName("selectEdition");
-var radioButtons = document.forms["statInputs"].elements["type"];
-var chart;
-var chartData;
-var articles;
+'use strict';
+let editionSelectors = document.getElementsByClassName('selectEdition');
+let radioButtons = document.forms['statInputs'].elements['type'];
+let chart;
+let chartData;
+let articles;
 
 blockSelector();
 eventHandlers();
 
 // Défini les event listeners
 function eventHandlers() {
-  document.getElementById("selectStats").addEventListener("change", function(event) {
-    document.getElementById("choixStat").style.display = "none";
-    document.getElementById("transactionDate").style.display = "none";
-    document.getElementById("transactionIntervale").style.display = "none";
-    document.getElementById("stats").innerHTML = "";
+  document.getElementById('selectStats').addEventListener('change', (event) => {
+    document.getElementById('choixStat').style.display = 'none';
+    document.getElementById('transactionDate').style.display = 'none';
+    document.getElementById('transactionIntervale').style.display = 'none';
+    document.getElementById('stats').innerHTML = '';
     chartData = null;
     chart = null;
 
-    switch (event.target.options[event.target.selectedIndex].value) {
-      case "1":
-        document.getElementById("choixStat").style.display = "block";
-        document.getElementById("transactionDate").style.display = "block";
+    switch (+event.target.options[event.target.selectedIndex].value) {
+      case 1:
+        document.getElementById('choixStat').style.display = 'block';
+        document.getElementById('transactionDate').style.display = 'block';
         break;
-      case "2":
-        document.getElementById("choixStat").style.display = "block";
-        document.getElementById("transactionIntervale").style.display = "block";
+      case 2:
+        document.getElementById('choixStat').style.display = 'block';
+        document.getElementById('transactionIntervale').style.display = 'block';
         intervalChart(editionSelectors.debut.selectedIndex);
         break;
-      case "3":
+      case 3:
         argentARemettre();
         break;
-      case "4":
+      case 4:
         compteBLU();
         break;
-      case "5":
+      case 5:
         livresValidesNonVendus();
         break;
     }
   });
 
-  for(var i = 0; i < radioButtons.length; i++) {
-    radioButtons[i].addEventListener("change", function(event) {
-      if(chartData) {
-        document.getElementById("stats").innerHTML = "";
+  for (let i = 0; i < radioButtons.length; i++) {
+    radioButtons[i].addEventListener('change', (event) => {
+      if (chartData) {
+        document.getElementById('stats').innerHTML = '';
         chart = null;
 
-        if(document.getElementById("selectStats").options[document.getElementById("selectStats").selectedIndex].value == 1) {
+        const selectStats = document.getElementById('selectStats');
+        if (selectStats.options[selectStats.selectedIndex].value == 1) {
           barChart(chartData);
         } else {
           intervalChart(chartData);
@@ -55,112 +56,112 @@ function eventHandlers() {
     });
   }
 
-  document.getElementById('jour').addEventListener("change", function(event) {
-    document.getElementById("stats").innerHTML = "";
+  document.getElementById('jour').addEventListener('change', (event) => {
+    document.getElementById('stats').innerHTML = '';
     barChart(event.target.value);
   });
 
-  editionSelectors.debut.addEventListener("change", function(event) {
-    document.getElementById("stats").innerHTML = "";
-    var selector = event.target;
+  editionSelectors.debut.addEventListener('change', (event) => {
+    document.getElementById('stats').innerHTML = '';
+    const selector = event.target;
 
-    if(selector.selectedIndex < editionSelectors.fin.selectedIndex) {
-      var nbEditions = editionSelectors.fin.options.length;
+    if (selector.selectedIndex < editionSelectors.fin.selectedIndex) {
+      const nbEditions = editionSelectors.fin.options.length;
 
-      for(var i = 0; i < nbEditions; i++)
-        editionSelectors.fin.options[i].removeAttribute("selected");
-      editionSelectors.fin.options[index].setAttribute("selected", "true");
+      for (let i = 0; i < nbEditions; i++) {
+        editionSelectors.fin.options[i].removeAttribute('selected');
+      }
+
+      editionSelectors.fin.options[index].setAttribute('selected', 'true');
     }
 
     blockSelector();
     intervalChart(editionSelectors.debut.selectedIndex);
   });
 
-  editionSelectors.fin.addEventListener("change", function() {
-    document.getElementById("stats").innerHTML = "";
+  editionSelectors.fin.addEventListener('change', () => {
+    document.getElementById('stats').innerHTML = '';
     intervalChart(editionSelectors.debut.selectedIndex);
   });
 }
 
-// Fonction AJAX
 function getXMLHttpRequest() {
-	var xmlhttp = null;
-
-	if (window.XMLHttpRequest || window.ActiveXObject) {
-		if (window.ActiveXObject) {
-			try {
-				xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-			} catch(e) {
-				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-		} else {
-			xmlhttp = new XMLHttpRequest();
+	if (window.ActiveXObject) {
+		try {
+			return new ActiveXObject('Msxml2.XMLHTTP');
+		} catch () {
+			return new ActiveXObject('Microsoft.XMLHTTP');
 		}
-	} else {
-		alert("Votre navigateur ne supporte pas l'objet XMLHTTPRequest...");
-		return null;
 	}
-	return xmlhttp;
+
+	return window.XMLHttpRequest ?  new XMLHttpRequest() : null;
 }
 
 function getData(functionName, data, callback) {
-  var xmlhttp = new getXMLHttpRequest();
-  var formData = new FormData();
+  const xmlhttp = getXMLHttpRequest();
+  const formData = new FormData();
 
   formData.append('f', functionName);
   formData.append('data', data);
 
-  xmlhttp.onreadystatechange = function(res) {
-    if (xmlhttp.readyState==4) {
+  xmlhttp.onreadystatechange = (res) => {
+    if (xmlhttp.readyState == 4) {
       callback(JSON.parse(xmlhttp.responseText));
     }
   };
 
-  xmlhttp.open("POST", "res/query_stats.php", true);
+  xmlhttp.open('POST', 'res/query_stats.php', true);
   xmlhttp.send(formData);
 }
 
 // Bloque le sélecteur de fin à celui de début
 function blockSelector() {
-  var nbEditions = editionSelectors.fin.options.length;
+  const nbEditions = editionSelectors.fin.options.length;
 
-  for(var i = 0; i < nbEditions; i++) {
-    editionSelectors.fin.options[i].removeAttribute("disabled");
+  for (let i = 0; i < nbEditions; i++) {
+    editionSelectors.fin.options[i].removeAttribute('disabled');
   }
 
-  var index = editionSelectors.debut.selectedIndex;
-  var nbEditions = editionSelectors.fin.options.length;
+  const index = editionSelectors.debut.selectedIndex;
+  const nbEditions = editionSelectors.fin.options.length;
 
-  for(var i = index + 1; i < nbEditions; i++) {
-    editionSelectors.fin.options[i].setAttribute("disabled", "true");
+  for (let i = index + 1; i < nbEditions; i++) {
+    editionSelectors.fin.options[i].setAttribute('disabled', 'true');
   }
 }
 
 
 function intervalChart(data) {
-  if(typeof data === 'object') {
-    Object.keys(data).forEach(function(key) {
-      if(!chart) {
-        var ctx = createCanvas("editionChart").getContext("2d");
-        chart = new Chart(ctx).Line(getChartData(data[key], document.querySelector('input[name="type"]:checked').value, key));
+  const ctx = createCanvas('editionChart').getContext('2d');
+  const input = document.querySelector('input[name="type"]:checked').value;
+
+  if (typeof data === 'object') {
+    Object.keys(data).forEach((key) => {
+      const intervalChartData = getChartData(data[key], input, key);
+
+      if (!chart) {
+        chart = new Chart(ctx).Line(intervalChartData);
       } else {
-        chart.addData(getChartData(data[key], document.querySelector('input[name="type"]:checked').value), key);
+        chart.addData(intervalChartData);
         chart.update();
       }
     });
   } else {
-    getData('transactionIntervale', editionSelectors.debut.options[data].value, function(res) {
-      var label = editionSelectors.debut.options[data].value;
+    getData('transactionIntervale', editionSelectors.debut.options[data].value, (res) => {
+      const label = editionSelectors.debut.options[data].value;
 
       if (!chartData) {
         chartData = {};
-      } chartData[label] = res;
+      }
+
+      chartData[label] = res;
+      const es = editionSelectors.debut.options[data].value;
+      const intervalChartData = getChartData(res, input, es);
 
       if (data === editionSelectors.debut.selectedIndex) {
-        var ctx = createCanvas("editionChart").getContext("2d");
-        chart = new Chart(ctx).Line(getChartData(res, document.querySelector('input[name="type"]:checked').value, editionSelectors.debut.options[data].value));
+        chart = new Chart(ctx).Line(intervalChartData);
       } else {
-        chart.addData(getChartData(res, document.querySelector('input[name="type"]:checked').value), editionSelectors.debut.options[data].value);
+        chart.addData(intervalChartData);
         chart.update();
       }
 
@@ -170,75 +171,78 @@ function intervalChart(data) {
 }
 
 function barChart(data) {
-  if(typeof data === 'object') {
-    var ctx = createCanvas("dateChart").getContext("2d");
-    new Chart(ctx).Bar((getChartData(data, document.querySelector('input[name="type"]:checked').value, "label")));
+  const ctx = createCanvas('dateChart').getContext('2d');
+  const input = document.querySelector('input[name="type"]:checked').value
+  const label = 'label';
+
+  if (typeof data === 'object') {
+    new Chart(ctx).Bar(getChartData(data, input, label));
   } else {
-    getData('transactionDate', data, function(res) {
+    getData('transactionDate', data, (res) => {
       chartData = res;
-      var ctx = createCanvas("dateChart").getContext("2d");
-      new Chart(ctx).Bar((getChartData(res, document.querySelector('input[name="type"]:checked').value, "label")));
+      const ctx = createCanvas('dateChart').getContext('2d');
+      new Chart(ctx).Bar(getChartData(res, input, label));
     });
   }
 }
 
 function getChartData(jsonData, dataType, label) {
-  var misEnVenteData = parseInt(jsonData["misEnVente"][dataType]) || 0;
-  var venteData = parseInt(jsonData["vente"][dataType]) || 0;
-  var venteParentEtudiantData = parseInt(jsonData["venteParentEtudiant"][dataType]) || 0;
-  var argentRemisData = parseInt(jsonData["argentRemis"][dataType]) || 0;
+  const misEnVenteData = +jsonData.misEnVente[dataType] || 0;
+  const venteData = +jsonData.vente[dataType] || 0;
+  const venteParentEtudiantData = +jsonData.venteParentEtudiant[dataType] || 0;
+  const argentRemisData = +jsonData.argentRemis[dataType] || 0;
 
-  if(label) {
-    var datasets = [
+  if (label) {
+    const datasets = [
       {
-        label: "Mis en vente",
-        fillColor: "rgba(160, 179, 137, 0.2)",
-        strokeColor: "rgba(160, 179, 137, 1)",
-        pointColor: "rgba(160, 179, 137, 1)",
-        highlightFill: "rgba(160, 179, 137, 1)",
-        highlightStroke: "rgba(160, 179, 137, 1)",
-        pointHighlightFill: "#000",
-        pointHighlightStroke: "rgba(160, 179, 137, 1)",
+        label: 'Mis en vente',
+        fillColor: 'rgba(160, 179, 137, 0.2)',
+        strokeColor: 'rgba(160, 179, 137, 1)',
+        pointColor: 'rgba(160, 179, 137, 1)',
+        highlightFill: 'rgba(160, 179, 137, 1)',
+        highlightStroke: 'rgba(160, 179, 137, 1)',
+        pointHighlightFill: '#000',
+        pointHighlightStroke: 'rgba(160, 179, 137, 1)',
         data: [misEnVenteData]
       },
       {
-        label: "Vendu",
-        fillColor: "rgba(187, 119, 57, 0.2)",
-        strokeColor: "rgba(187, 119, 57, 1)",
-        pointColor: "rgba(187, 119, 57, 1)",
-        highlightFill: "rgba(187, 119, 57, 1)",
-        highlightStroke: "rgba(187, 119, 57, 1)",
-        pointHighlightFill: "#000",
-        pointHighlightStroke: "rgba(187, 119, 57, 1)",
+        label: 'Vendu',
+        fillColor: 'rgba(187, 119, 57, 0.2)',
+        strokeColor: 'rgba(187, 119, 57, 1)',
+        pointColor: 'rgba(187, 119, 57, 1)',
+        highlightFill: 'rgba(187, 119, 57, 1)',
+        highlightStroke: 'rgba(187, 119, 57, 1)',
+        pointHighlightFill: '#000',
+        pointHighlightStroke: 'rgba(187, 119, 57, 1)',
         data: [venteData]
       },
       {
-        label: "Vendu à 50%",
-        fillColor: "rgba(191, 54, 12, 0.2)",
-        strokeColor: "rgb(191, 54, 12)",
-        pointColor: "rgb(191, 54, 12)",
-        highlightFill: "rgb(191, 54, 12)",
-        ighlightStroke: "rgb(191, 54, 12)",
-        pointHighlightFill: "#000",
-        pointHighlightStroke: "rgb(191, 54, 12)",
+        label: 'Vendu à 50%',
+        fillColor: 'rgba(191, 54, 12, 0.2)',
+        strokeColor: 'rgb(191, 54, 12)',
+        pointColor: 'rgb(191, 54, 12)',
+        highlightFill: 'rgb(191, 54, 12)',
+        ighlightStroke: 'rgb(191, 54, 12)',
+        pointHighlightFill: '#000',
+        pointHighlightStroke: 'rgb(191, 54, 12)',
         data: [venteParentEtudiantData]
       },
       {
-        label: "Argent remis",
-        fillColor: "rgba(51, 102, 153, 0.2)",
-        strokeColor: "rgb(51, 102, 153)",
-        pointColor: "rgb(51, 102, 153)",
-        highlightFill: "rgb(51, 102, 153)",
-        highlightStroke: "rgb(51, 102, 153)",
-        pointHighlightFill: "#000",
-        pointHighlightStroke: "rgb(51, 102, 153)",
+        label: 'Argent remis',
+        fillColor: 'rgba(51, 102, 153, 0.2)',
+        strokeColor: 'rgb(51, 102, 153)',
+        pointColor: 'rgb(51, 102, 153)',
+        highlightFill: 'rgb(51, 102, 153)',
+        highlightStroke: 'rgb(51, 102, 153)',
+        pointHighlightFill: '#000',
+        pointHighlightStroke: 'rgb(51, 102, 153)',
         data: [argentRemisData]
       }
     ];
 
     return {
       labels: [label],
-      datasets: datasets
+      datasets,
     };
   }
 
@@ -251,133 +255,119 @@ function getChartData(jsonData, dataType, label) {
 }
 
 function createCanvas(id) {
-  var canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
 
-  canvas.setAttribute("id", id);
-  canvas.setAttribute("width", "800");
-  canvas.setAttribute("height", "600");
+  canvas.setAttribute('id', id);
+  canvas.setAttribute('width', '800');
+  canvas.setAttribute('height', '600');
 
-  document.getElementById("stats").appendChild(canvas);
+  document.getElementById('stats').appendChild(canvas);
   return canvas;
 }
 
 function argentARemettre() {
-  getData('argentARemettre', true, function(res) {
-    var total = res.total;
+  getData('argentARemettre', true, (res) => {
+    const total = res.total;
     delete res.total;
     createTable(res, total);
   });
 }
 
 function createTable(members, total) {
-  var title = document.createElement('h2');
-  title.appendChild(document.createTextNode("Argent total à remettre " + total + "$"));
+  const stats = document.getElementById('stats');
+  const title = document.createElement('h2');
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  const tbody = document.createElement('tbody');
+  const columns = [
+    { key: 'no', title: 'No étudiant'},
+    { key: 'nom', title: 'Nom' },
+    { key: 'prenom', title: 'Prénom' },
+    { key: 'montant', title: 'Montant dû' }
+  ];
 
-  var table = document.createElement('table');
+  title.appendChild(document.createTextNode(`Argent total à remettre ${total}$`));
   table.setAttribute('class', 'tablesorter');
 
-  var thead = document.createElement('thead');
-  var headRow = document.createElement('tr');
-  var tbody = document.createElement("tbody");
-
-  var th = document.createElement('th');
-  th.appendChild(document.createTextNode("No étudiant"));
-  headRow.appendChild(th);
-
-  th = document.createElement('th');
-  th.appendChild(document.createTextNode("Nom"));
-  headRow.appendChild(th);
-
-  th = document.createElement('th');
-  th.appendChild(document.createTextNode("Prénom"));
-  headRow.appendChild(th);
-
-  th = document.createElement('th');
-  th.appendChild(document.createTextNode("Montant dû"));
-  headRow.appendChild(th);
+  columns.forEach((column) => {
+    const th = document.createElement('th');
+    th.appendChild(document.createTextNode(column.title));
+    headRow.appendChild(th);
+  });
 
   thead.appendChild(headRow);
   table.appendChild(thead);
 
-  Object.keys(members).forEach(function(key) {
-    var bodyRow = document.createElement('tr');
+  Object.keys(members).forEach((key) => {
+    const tr = document.createElement('tr');
 
-    var td = document.createElement('td');
-    td.appendChild(document.createTextNode(members[key]['no']));
-    bodyRow.appendChild(td);
+    columns.forEach((column) => {
+      const td = document.createElement('td');
+      td.appendChild(document.createTextNode(members[key][column.key]));
+      tr.appendChild(td);
+    });
 
-    td = document.createElement('td');
-    td.appendChild(document.createTextNode(members[key]['nom']));
-    bodyRow.appendChild(td);
-
-    td = document.createElement('td');
-    td.appendChild(document.createTextNode(members[key]['prenom']));
-    bodyRow.appendChild(td);
-
-    td = document.createElement('td');
-    td.appendChild(document.createTextNode(members[key]['montant'] + "$"));
-    bodyRow.appendChild(td);
-
-    tbody.appendChild(bodyRow);
+    tbody.appendChild(tr);
   });
 
   table.appendChild(tbody);
-  document.getElementById('stats').appendChild(title);
-  document.getElementById('stats').appendChild(table);
+  stats.appendChild(title);
+  stats.appendChild(table);
 
   sortTables();
 }
 
 function compteBLU() {
-  getData('blu', true, function(res) {
-    var strPassif = "La BLU possède " + res.passif.quantite + " livres en vente pour un montant de " + res.passif.montant + "$";
-    var strActif = "La BLU a récupéré un montant de " + res.actif.montant + "$ provenant de comptes désactivés"
-    var passif = document.createElement('p');
-    var actif = document.createElement('p');
+  getData('blu', true, (res) => {
+    const stats = document.getElementById('stats');
+    const passif = document.createElement('p');
+    const actif = document.createElement('p');
+    const strPassif = `La BLU possède ${res.passif.quantite} livres en vente pour un montant de ${res.passif.montant}$`;
+    const strActif = `La BLU a récupéré un montant de ${res.actif.montant}$ provenant de comptes désactivés`;
 
     passif.appendChild(document.createTextNode(strPassif));
     actif.appendChild(document.createTextNode(strActif));
-
-    document.getElementById("stats").appendChild(passif);
-    document.getElementById("stats").appendChild(actif);
+    stats.appendChild(passif);
+    stats.appendChild(actif);
   });
 }
 
 function livresValidesNonVendus() {
-  getData('livresValidesNonVendus', null, function(res) {
-    console.log(res);
-
+  getData('livresValidesNonVendus', null, (res) => {
     articles = res;
-    var table = document.createElement('table');
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+    const rowHead = document.createElement('tr');
+    const columns = [
+      { key: 'title', title: 'Titre' },
+      { key: 'category', title: 'Catégorie' }
+    ];
+
     table.setAttribute('class', 'tablesorter');
 
-    var thead = document.createElement('thead');
-    var tbody = document.createElement('tbody');
-    var rowHead = document.createElement('tr');
-    var titleHead = document.createElement('th');
-    var categoryHead = document.createElement('th');
+    columns.forEach((column) => {
+      const th = document.createElement('th');
+      th.appendChild(document.createTextNode(column.title));
+      rowHead.appendChild(th);
+    });
 
-    titleHead.appendChild(document.createTextNode('Titre'));
-    categoryHead.appendChild(document.createTextNode('Catégorie'));
-    rowHead.appendChild(titleHead);
-    rowHead.appendChild(categoryHead);
     thead.appendChild(rowHead);
     table.appendChild(thead);
 
-    Object.keys(articles).forEach(function(id) {
-      var article = articles[id];
-      var tr = document.createElement('tr');
-      var title = document.createElement('td');
-      var category = document.createElement('td');
+    Object.keys(articles).forEach((id) => {
+      const item = articles[id];
+      const tr = document.createElement('tr');
 
-      tr.setAttribute("data-article", article.id);
-      tr.setAttribute("onclick", "openArticle(this)");
+      columns.forEach((column) => {
+        const td = document.createElement('td');
+        td.appendChild(document.createTextNode(item[column.key]));
+        tr.appendChild(td);
+      });
 
-      title.appendChild(document.createTextNode(article.title));
-      category.appendChild(document.createTextNode(article.category));
-
-      tr.appendChild(title);
-      tr.appendChild(category);
+      tr.setAttribute('data-article', item.id);
+      tr.setAttribute('onclick', 'openArticle(this)');
       tbody.appendChild(tr);
     });
 
