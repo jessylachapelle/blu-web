@@ -3,7 +3,7 @@ let editionSelectors = document.getElementsByClassName('selectEdition');
 let radioButtons = document.forms['statInputs'].elements['type'];
 let chart;
 let chartData;
-let articles;
+let items;
 
 blockSelector();
 eventHandlers();
@@ -66,9 +66,9 @@ function eventHandlers() {
     const selector = event.target;
 
     if (selector.selectedIndex < editionSelectors.fin.selectedIndex) {
-      const nbEditions = editionSelectors.fin.options.length;
+      const numEditions = editionSelectors.fin.options.length;
 
-      for (let i = 0; i < nbEditions; i++) {
+      for (let i = 0; i < numEditions; i++) {
         editionSelectors.fin.options[i].removeAttribute('selected');
       }
 
@@ -89,7 +89,7 @@ function getXMLHttpRequest() {
 	if (window.ActiveXObject) {
 		try {
 			return new ActiveXObject('Msxml2.XMLHTTP');
-		} catch () {
+		} catch (e) {
 			return new ActiveXObject('Microsoft.XMLHTTP');
 		}
 	}
@@ -104,9 +104,11 @@ function getData(functionName, data, callback) {
   formData.append('f', functionName);
   formData.append('data', data);
 
-  xmlhttp.onreadystatechange = (res) => {
+  xmlhttp.onreadystatechange = () => {
     if (xmlhttp.readyState == 4) {
-      callback(JSON.parse(xmlhttp.responseText));
+      const res = JSON.parse(xmlhttp.responseText);
+      console.log(Object.keys(res).length); // 2095
+      callback(res);
     }
   };
 
@@ -116,16 +118,15 @@ function getData(functionName, data, callback) {
 
 // Bloque le sélecteur de fin à celui de début
 function blockSelector() {
-  const nbEditions = editionSelectors.fin.options.length;
+  const numEditions = editionSelectors.fin.options.length;
 
-  for (let i = 0; i < nbEditions; i++) {
+  for (let i = 0; i < numEditions; i++) {
     editionSelectors.fin.options[i].removeAttribute('disabled');
   }
 
   const index = editionSelectors.debut.selectedIndex;
-  const nbEditions = editionSelectors.fin.options.length;
 
-  for (let i = index + 1; i < nbEditions; i++) {
+  for (let i = index + 1; i < numEditions; i++) {
     editionSelectors.fin.options[i].setAttribute('disabled', 'true');
   }
 }
@@ -156,12 +157,11 @@ function intervalChart(data) {
 
       chartData[label] = res;
       const es = editionSelectors.debut.options[data].value;
-      const intervalChartData = getChartData(res, input, es);
 
       if (data === editionSelectors.debut.selectedIndex) {
-        chart = new Chart(ctx).Line(intervalChartData);
+        chart = new Chart(ctx).Line(getChartData(res, input, es));
       } else {
-        chart.addData(intervalChartData);
+        chart.addData(getChartData(res, input), es);
         chart.update();
       }
 
@@ -335,7 +335,7 @@ function compteBLU() {
 
 function livresValidesNonVendus() {
   getData('livresValidesNonVendus', null, (res) => {
-    articles = res;
+    items = res;
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
@@ -356,8 +356,8 @@ function livresValidesNonVendus() {
     thead.appendChild(rowHead);
     table.appendChild(thead);
 
-    Object.keys(articles).forEach((id) => {
-      const item = articles[id];
+    Object.keys(items).forEach((id) => {
+      const item = items[id];
       const tr = document.createElement('tr');
 
       columns.forEach((column) => {

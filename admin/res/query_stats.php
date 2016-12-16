@@ -107,10 +107,8 @@ function getMembreAvecRemise($compteActif) {
 
   $query = "SELECT no, first_name, last_name
             FROM member
-            INNER JOIN transaction
-              ON member.no=transaction.member
             WHERE last_activity $symb '$date'
-            ORDER BY nom, prenom, no;";
+            ORDER BY last_name, first_name, no;";
 
   include '../../#/connection.php';
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
@@ -175,7 +173,7 @@ function compteBLU($actif) {
             FROM copy
             INNER JOIN transaction
               ON copy.id=transaction.copy
-            INNER JOIN membre
+            INNER JOIN member
               ON transaction.member=member.no
             $typeTransaction
             AND transaction.member IN(SELECT no FROM member WHERE last_activity>='$date');";
@@ -194,7 +192,7 @@ function compteBLU($actif) {
 }
 
 function livresValidesNonVendus() {
-  $query = "SELECT item.id, item.name, subject.name, category.name
+  $query = "SELECT DISTINCT(item.id), item.name, subject.name AS subject, category.name AS category
             FROM item
             INNER JOIN subject
               ON item.subject=subject.id
@@ -202,15 +200,15 @@ function livresValidesNonVendus() {
               ON subject.category=category.id
             INNER JOIN status
               ON item.status=status.id
+            INNER JOIN copy
+              ON item.id=copy.item
+            INNER JOIN transaction
+              ON copy.id=transaction.copy
+            INNER JOIN transaction_type
+              ON transaction.type=transaction_type.id
             WHERE status.code='VALID'
-            AND article.id NOT IN(SELECT DISTINCT(copy.item)
-                                  FROM copy
-                                  INNER JOIN transaction
-                                    ON copy.id=transaction.copy
-                                  INNER JOIN transaction_type
-                                    ON transaction.type=transaction_type.id
-                                  WHERE transaction_type.code LIKE 'SELL%'
-                                  AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR)));";
+            AND transaction_type.code LIKE 'SELL%'
+            AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR));";
 
     include '../../#/connection.php';
     $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
