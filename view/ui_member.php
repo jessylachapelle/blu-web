@@ -376,7 +376,13 @@ function getTelephone($memberNo) {
 }
 
 function getCopiesInStock($memberNo) {
-  return getCopies($memberNo, 'ADD');
+  $copies = getCopies($memberNo, 'ADD');
+
+  foreach($copies as $copy) {
+    $copy->setDateAdded(getTransactionDate($copy->getId(), 'ADD'));
+  }
+
+  return $copies;
 }
 
 function getCopiesSold($memberNo) {
@@ -384,6 +390,7 @@ function getCopiesSold($memberNo) {
 
   foreach($copies as $copy) {
     $copy->setDateAdded(getTransactionDate($copy->getId(), 'ADD'));
+    $copy->setDateSold(getTransactionDate($copy->getId(), 'SELL'));
   }
 
   return $copies;
@@ -395,6 +402,7 @@ function getCopiesPaid($memberNo) {
   foreach($copies as $copy) {
     $copy->setDateAdded(getTransactionDate($copy->getId(), 'ADD'));
     $copy->setDateSold(getTransactionDate($copy->getId(), 'SELL'));
+    $copy->setDatePaid(getTransactionDate($copy->getId(), 'PAY'));
   }
 
   return $copies;
