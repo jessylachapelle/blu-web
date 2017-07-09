@@ -24,7 +24,7 @@ if (isConnected()) {
     if (isConnected()) { ?>
       <span class='oi'
             data-glyph='star'
-            data-article='<?php echo $article->getId() ?>'
+            data-item='<?php echo $article->getId() ?>'
             data-state='<?php echo getState(); ?>'
             onclick='subscribe(this)'>
       </span>

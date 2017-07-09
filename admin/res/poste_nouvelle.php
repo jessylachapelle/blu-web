@@ -1,18 +1,18 @@
 <?php
-if ($_POST['titre'] != '' && $_POST['message'] != '') {
+if ($_POST['title'] != '' && $_POST['message'] != '') {
   $param = '';
-  $id = $_POST['id_nouvelle'];
-  $title = addslashes($_POST['titre']);
+  $id = $_POST['id'];
+  $title = addslashes($_POST['title']);
   $message = nl2br(addslashes($_POST['message']));
-  $start = ($_POST['debut'] == '' ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['debut']));
-  $end = $_POST['fin'] == '' ? null : $end = date('Y-m-d', strtotime($_POST['fin']));;
+  $start = $_POST['startDate'] == '' ? date('Y-m-d', time()) : date('Y-m-d', strtotime($_POST['startDate']));
+  $end = $_POST['endDate'] == '' ? null : $end = date('Y-m-d', strtotime($_POST['endDate']));;
 
   if ($id == 0) {
-		$query = "INSERT INTO new (title, message, start_date, end_date)
+		$query = "INSERT INTO news (title, message, start_date, end_date)
 					    VALUES('$title', '$message', '$start', '$end');";
     $param = 'insert';
   } else {
-    $query = "UPDATE new
+    $query = "UPDATE news
                 SET title='$title',
                     message='$message',
                     start_date='$start',
@@ -22,7 +22,7 @@ if ($_POST['titre'] != '' && $_POST['message'] != '') {
   }
 
   include '../../#/connection.php';
-  mysqli_query($connection, $query)or die ("Query failed: '$query'");
+  mysqli_query($connection, $query) or die("Query failed: '$query'");
   mysqli_close($connection);
   return redirect($param, 'true');
 }

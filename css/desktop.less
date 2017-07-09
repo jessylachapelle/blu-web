@@ -64,6 +64,17 @@ form:not(.nostyle) {
   input:not[type=date] {
   	width: 300px;
   }
+
+	.fieldWrapper {
+		label {
+			display: inline-block;
+			width: 200px;
+		}
+
+		input {
+			display: inline-block;
+		}
+	}
 }
 
 main#nouvelle{
@@ -83,19 +94,18 @@ main#nouvelle{
 }
 
 main#admin-nouvelle{
-
   form {
     width: 70%;
-    input{
+    input {
       width: 100%;
       display: block;
     }
-    input[type=date]{
+    input[type=date] {
       width: 30%;
     }
-    button{
+    button {
       margin: 1em;
-    }
+		}
   }
   table {
     tbody {
@@ -154,7 +164,6 @@ footer {
   }
 }
 
-
 /* ID
 ======*/
 #courriel, #nodossier {
@@ -196,7 +205,7 @@ footer {
 
       input, button {
         display: inline-block;
-      }
+			}
     }
 
     #nocivic, #app {

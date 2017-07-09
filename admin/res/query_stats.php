@@ -21,11 +21,11 @@ if(isset($_POST['f'])) {
 
 function statsByDate($date) {
   return [
-    'misEnVente' => statistiquesTransaction($date, 1),
-    'vente' => statistiquesTransaction($date, 2),
-    'venteParentEtudiant' => statistiquesTransaction($date, 3),
+    'misEnVente' => statistiquesTransaction($date, 'ADD'),
+    'vente' => statistiquesTransaction($date, 'SELL'),
+    'venteParentEtudiant' => statistiquesTransaction($date, 'SELL_PARENT'),
     'economieParentEtudiant' => economieParentEtudiant($date),
-    'argentRemis' => statistiquesTransaction($date, 4)
+    'argentRemis' => statistiquesTransaction($date, 'PAY')
   ];
 }
 
@@ -42,7 +42,9 @@ function statistiquesTransaction($date, $transactionType) {
             FROM transaction
             INNER JOIN copy
               ON transaction.copy=copy.id
-            WHERE type=$transactionType ";
+            INNER JOIN transaction_type
+              ON transaction.type=transaction_type.id
+            WHERE transaction_type.code='$transactionType' ";
   $query .= is_array($date) ? "AND date>='$date[0]' AND date<='$date[1]';" : "AND date='$date';" ;
 
   include '../../#/connection.php';
@@ -63,7 +65,9 @@ function economieParentEtudiant($date) {
             FROM transaction
             INNER JOIN copy
               ON transaction.copy=copy.id
-            WHERE type=3 ";
+            INNER JOIN transaction_type
+              ON transaction.type=transaction_type.id
+            WHERE transaction_type.code='SELL_PARENT' ";
   $query .= is_array($date) ? "AND date>='$date[0]' AND date<='$date[1]';" : "AND date='$date';" ;
 
   include '../../#/connection.php';
@@ -103,10 +107,8 @@ function getMembreAvecRemise($compteActif) {
 
   $query = "SELECT no, first_name, last_name
             FROM member
-            INNER JOIN transaction
-              ON member.no=transaction.member
             WHERE last_activity $symb '$date'
-            ORDER BY nom, prenom, no;";
+            ORDER BY last_name, first_name, no;";
 
   include '../../#/connection.php';
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
@@ -130,13 +132,16 @@ function ArgentRemettreParMembre($memberNo) {
             FROM transaction
             INNER JOIN copy
               ON transaction.copy=copy.id
+            INNER JOIN transaction_type
+              ON transaction.type=transaction_type.id
             WHERE no_membre=$memberNo
-              AND (transaction.type=2
-                  OR transaction.type=3)
-              AND copy NOT IN(SELECT copy
-                                       FROM transaction
-                                       WHERE member=$memberNo
-                                       AND type=4);";
+            AND transaction_type.code LIKE 'SELL%'
+            AND copy NOT IN(SELECT copy
+                            FROM transaction
+                            INNER JOIN transaction_type
+                              ON transaction.type=transaction_type.id
+                            WHERE member=$memberNo
+                            AND transaction_type.code IN ('PAY', 'DONATE'));";
 
    include '../../#/connection.php';
    $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
@@ -155,10 +160,12 @@ function getActifPassifBLU() {
 
 function compteBLU($actif) {
   $date = (Date('Y') - 1) . "-" . Date('m') . "-" . Date('d');
-  $typeTransaction = "WHERE transaction.type=1 AND copy.id NOT IN(SELECT copy FROM transaction WHERE type=2 OR type=3)";
+  $typeTransaction = "WHERE transaction.type=(SELECT id FROM transaction_type WHERE code='ADD')
+                      AND copy.id NOT IN(SELECT copy FROM transaction WHERE type IN(SELECT id FROM transaction_type WHERE code LIKE 'SELL%'))";
 
-  if($actif) {
-    $typeTransaction = "WHERE (transaction.type=2 OR transaction.type=3) AND copy.id NOT IN(SELECT copy FROM transaction WHERE type=4)";
+  if ($actif) {
+    $typeTransaction = "WHERE transaction.type IN(SELECT id FROM transaction_type WHERE code LIKE 'SELL%')
+                        AND copy.id NOT IN(SELECT copy FROM transaction WHERE type IN(SELECT id FROM transaction_type WHERE code='PAY'))";
   }
 
   $query = "SELECT SUM(copy.price) AS amount,
@@ -166,7 +173,7 @@ function compteBLU($actif) {
             FROM copy
             INNER JOIN transaction
               ON copy.id=transaction.copy
-            INNER JOIN membre
+            INNER JOIN member
               ON transaction.member=member.no
             $typeTransaction
             AND transaction.member IN(SELECT no FROM member WHERE last_activity>='$date');";
@@ -185,19 +192,23 @@ function compteBLU($actif) {
 }
 
 function livresValidesNonVendus() {
-  $query = "SELECT item.id, item.name, subject.name, category.name
+  $query = "SELECT DISTINCT(item.id), item.name, subject.name AS subject, category.name AS category
             FROM item
             INNER JOIN subject
               ON item.subject=subject.id
             INNER JOIN category
               ON subject.category=category.id
-            WHERE item.status=(SELECT id FROM status WHERE code='VALID')
-            AND article.id NOT IN(SELECT DISTINCT(copy.item)
-                                  FROM copy
-                                  INNER JOIN transaction
-                                    ON copy.id=transaction.copy
-                                  WHERE (transaction.type=2 OR transaction.type=3)
-                                  AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR)));";
+            INNER JOIN status
+              ON item.status=status.id
+            INNER JOIN copy
+              ON item.id=copy.item
+            INNER JOIN transaction
+              ON copy.id=transaction.copy
+            INNER JOIN transaction_type
+              ON transaction.type=transaction_type.id
+            WHERE status.code='VALID'
+            AND transaction_type.code LIKE 'SELL%'
+            AND transaction.date > (DATE_SUB(CURDATE(), INTERVAL 2 YEAR));";
 
     include '../../#/connection.php';
     $result = mysqli_query($connection, $query) or die("Query failed: '$query'");

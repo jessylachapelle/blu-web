@@ -20,7 +20,7 @@
 			</div>
 			<div>
 				<h1>Formulaires d’inscription</h1>
-				<p>Pour vendre des livres à la BLU, il vous faut d’abord remplir et imprimer le Formulaire d’inscription. Veuillez noter que tous les champs d’identification et d’adressage sont obligatoires (y compris le numéro de dossier), que vous ayez déjà vendu des livres ou non. Pour ajouter plus de dix (10) livres à la fois, utilisez la Fiche d’extension, que vous devrez agrafer au formulaire d’inscription.
+				<p>Pour vendre des livres à la BLU, il vous faut d’abord remplir et imprimer le <a href="files/formulaire.pdf" target="_blank">Formulaire d’inscription</a>. Veuillez noter que tous les champs d’identification et d’adressage sont obligatoires (y compris le numéro de dossier), que vous ayez déjà vendu des livres ou non. Pour ajouter plus de dix (10) livres à la fois, utilisez la Fiche d’extension, que vous devrez agrafer au formulaire d’inscription.
 				</p>
 				<p>Pour remplir le formulaire et l’imprimer, utilisez un lecteur PDF comme Adobe Reader ou Foxit Reader.
 				</p>

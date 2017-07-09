@@ -37,17 +37,20 @@ function getArticle($itemId) {
   return $item;
 }
 
-function getArticleStats($articleId) {
+function getArticleStats($itemId) {
   $stats = [];
   $query = "SELECT SUM(copy.price) AS amount,
                    COUNT(copy.id) AS quantity
             FROM copy
-            INNER JOIN transaction
-              ON transaction.copy=copy.id
-            WHERE copy.item=$articleId
-              AND transaction.copy NOT IN(SELECT transaction.copy
-                                                   FROM transaction
-                                                   WHERE type=2 OR type=3)";
+            WHERE copy.item=$itemId
+              AND copy.id NOT IN(SELECT copy.id
+                                 FROM copy
+                                 INNER JOIN transaction
+                                  ON copy.id=transaction.copy
+                                 INNER JOIN transaction_type
+                                   ON transaction.type=transaction_type.id
+                                 WHERE copy.item=$itemId
+                                 AND transaction_type.code LIKE 'SELL%')";
 
   include "#/connection.php";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");

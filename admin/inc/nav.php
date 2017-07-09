@@ -3,5 +3,5 @@
 	<a href="statistiques.php">STATISTIQUES</a>
 	<a href="nouvelles.php">NOUVELLES</a>
 	<a href="signalement.php">RAPPORT D'ERREURS</a>
-	<a href="employés.php">EMPLOYÉS</a>
+	<?php // <a href="employés.php">EMPLOYÉS</a> ?>
 </nav>
