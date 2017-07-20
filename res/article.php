@@ -4,25 +4,30 @@ require_once 'res/article.php';
 function getArticle($itemId) {
   $item = new Article();
 
-  $query = "SELECT name, publication, edition, editor, `ean13`
-            FROM item WHERE id=$itemId;";
+  $query = "SELECT id, name, publication, edition, editor, `ean13` FROM item WHERE id = ?;";
 
-  include "#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
-  $row = mysqli_fetch_assoc($result);
+  include '#/connection.php';
+  $statement = mysqli_prepare($connection, $query);
+  mysqli_stmt_bind_param($statement,'i', $itemId);
+  
+  mysqli_stmt_execute($statement);
+  mysqli_stmt_bind_result($statement, $id, $name, $publication, $edition, $editor, $ean13);
+  mysqli_stmt_fetch($statement);
 
-  $item->setId($itemId);
-  $item->setTitle($row['name']);
-  $item->setEditor($row['editor']);
-  $item->setEdition($row['edition']);
-  $item->setYear($row['publication']);
-  $item->setCode($row['ean13']);
+  $item->setId($id);
+  $item->setTitle($name);
+  $item->setEditor($editor);
+  $item->setEdition($edition);
+  $item->setYear($publication);
+  $item->setCode($ean13);
+
+  mysqli_stmt_close($statement);
 
   $query = "SELECT first_name, last_name
             FROM item_author
             INNER JOIN author
               ON item_author.author=author.id
-            WHERE item=$itemId;";
+            WHERE item=$id;";
   $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
 
   $author = "";
