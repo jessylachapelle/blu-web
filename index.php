@@ -12,6 +12,8 @@
 					($_SESSION['expire'] == null || time() < $_SESSION['expire'])) {
 				include 'view/ui_member.php';
 			} else {
+				session_unset();
+				session_destroy();
 				include 'view/ui_login.php';
 			}
       ?>

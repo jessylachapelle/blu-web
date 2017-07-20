@@ -62,12 +62,12 @@ if (isConnected()) { ?>
 
 <?php if ($stats['quantity'] > 0) { ?>
   <p>Nous possédons <?php echo $stats['quantity'] ?> exemplaire(s) en stock de cet article et le prix moyen de vente est de <?php echo $stats['average'] ?>$.</p>
-<? } else { ?>
+<?php } else { ?>
   <p>Nous ne possédons pas d'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informer d'un éventuel approvisionnement.</p>
-<? } ?>
+<?php } ?>
 
 <?php if (isConnected()) { ?>
    <?php
     // <button onclick='openSignal()'>Signaler une erreur</button>
   ?> 
-<? } ?>
+<?php } ?>

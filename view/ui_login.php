@@ -2,7 +2,7 @@
 <p>Pour consulter la page sommaire de votre compte, et ainsi savoir si nous vous devons de l’argent, veuillez vous identifier à l’aide de votre adresse courriel et de votre numéro de dossier.</p>
 <?php if(isset($_GET['error']) && $_GET['error'] == '401') { ?>
   <p id='error'>Erreur de connexion, veuillez vérifier votre adresse courriel et votre numéro de dossier</p>
-<? } ?>
+<?php } ?>
 <form action="res/login.php" method="post">
 	<label for="email">Adresse courriel<span class="required">*</span> :</label>
 	<input id="email" name="email" type="text" required="" />
