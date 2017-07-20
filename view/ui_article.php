@@ -5,17 +5,23 @@ require_once 'res/article.php';
 $article = getArticle($_GET['article']);
 $stats = getArticleStats($article->getId());
 
-if (isConnected()) {
-  echo "<script>const memberNo = " . $_SESSION['memberNo'] . "</script>"  ?>
-  <div id='signalement'>
-    <form method='post' action='res/signalement.php'>
-      <input type='hidden' id='article' name='article' value="<?php echo $article->getId() ?>" />
-      <input type='hidden' id='memberNo' name='memberNo' value="<?php echo $_SESSION['memberNo']; ?>" />
-      <textarea name='signal' placeholder="Décriver l'erreur que vous avez trouvé"></textarea>
-      <button>Enregistrer</button>
-      <button formaction='' onclick='closeSignal()'>Annuler</button>
-    </form>
-  </div>
+if (isConnected()) { ?>
+  <script>
+    const memberNo = <?php echo $_SESSION['memberNo'] ?>;
+    document.getElementsByTagName('main')[0].removeChild(document.body.getElementsByTagName('script')[0]);
+  </script>
+
+  <?php
+  // <div id='signalement'>
+  //   <form method='post' action='res/signalement.php'>
+  //     <input type='hidden' id='article' name='article' value="<?php echo $article->getId() >" />
+  //     <input type='hidden' id='memberNo' name='memberNo' value="<?php echo $_SESSION['memberNo']; >" />
+  //     <textarea name='signal' placeholder="Décriver l'erreur que vous avez trouvé"></textarea>
+  //     <button>Enregistrer</button>
+  //     <button formaction='' onclick='closeSignal()'>Annuler</button>
+  //   </form>
+  // </div>
+  ?>
 <?php } ?>
 
 <div style='margin-top: 20px;'>
@@ -61,5 +67,7 @@ if (isConnected()) {
 <? } ?>
 
 <?php if (isConnected()) { ?>
-  <button onclick='openSignal()'>Signaler une erreur</button>
+   <?php
+    // <button onclick='openSignal()'>Signaler une erreur</button>
+  ?> 
 <? } ?>
