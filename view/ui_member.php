@@ -529,7 +529,29 @@ function getAmountSold($itemId) {
 }
 
 function getAmountInStock($idArticle) {
-  return (getTotalInventory($idArticle) - getAmountSold($idArticle));
+  $query = "SELECT
+              (SELECT COUNT(DISTINCT(copy.id))
+              FROM copy
+              INNER JOIN transaction
+                ON copy.id = transaction.copy
+              WHERE item = 1704) - 
+              (SELECT COUNT(DISTINCT(copy.id))
+              FROM copy
+              INNER JOIN transaction
+                ON copy.id = transaction.copy
+              WHERE item = 1704
+              AND transaction.type IN (SELECT transaction_type.id
+                                      FROM transaction_type
+                                      WHERE transaction_type.code
+                                      IN ('SELL', 'SELL_PARENT', 'AJUST_INVENTORY')))
+            AS quantity;";
+
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
+  $row = mysqli_fetch_assoc($result);
+
+  mysqli_close($connection);
+  return $row['quantity'];
 }
 
 function getTransactionDate($copyId, $transactionType) {
