@@ -10,49 +10,49 @@
   $sold = getCopiesSold($member->getNo());
   $paid = getCopiesPaid($member->getNo());
 ?>
-
-<div id='overlay'>
-  <form id='coord-form' method='post'>
-    <input id='memberNo' name='memberNo' type="hidden" />
-    <div>
-      <input id='address' name='address' type='text' placeholder='Adresse' required='required' />
-    </div>
-    <div>
-      <input id='codepostal' name='codepostal' type='text' placeholder='Code Postal' required='' />
-      <input id='ville' name='ville' type='text' placeholder='Ville' required='' />
-      <select id='province' name='province'>
-        <option value='AB'>Alberta</option>
-        <option value="BC">Colombie-Britannique</option>
-        <option value="PE">Île-du-Prince-Édouard</option>
-        <option value="MB">Manitoba</option>
-        <option value="NB">Nouveau-Brunswick</option>
-        <option value="NU">Nunavut</option>
-        <option value='ON'>Ontario</option>
-        <option value='QC' selected=''>Québec</option>
-        <option value="SK">Saskatchewan</option>
-        <option value="NL">Terre-Neuve-et-Labrador</option>
-        <option value="NT">Territoires du Nord-Ouest</option>
-        <option value="YT">Yukon</option>
-      </select>
-    </div>
-    <div>
-      <input id='idtel1' name="idtel1" type="hidden" />
-      <input id='telephone1' name='telephone1' type='tel' placeholder='Numéro de téléphone' required='' />
-      <input id='note1' name='note1' type='text' placeholder='Note' />
-    </div>
-    <div>
-      <input id='idtel2' name="idtel2" type="hidden" />
-      <input id='telephone2' name='telephone2' type='tel' placeholder='Numéro de téléphone' />
-      <input id='note2' name='note2' type='text' placeholder='Note' />
-    </div>
-    <input id='courriel' name='courriel' type='email' placeholder='Courriel' required='' />
-    <div>
-      <button>Enregistrer</button>
-      <button formaction="" onclick='closeOverlay()'>Annuler</button>
-    </div>
-  </form>
-</div>
-
+<?php
+// <div id='overlay'>
+//   <form id='coord-form' method='post'>
+//     <input id='memberNo' name='memberNo' type="hidden" />
+//     <div>
+//       <input id='address' name='address' type='text' placeholder='Adresse' required='required' />
+//     </div>
+//     <div>
+//       <input id='codepostal' name='codepostal' type='text' placeholder='Code Postal' required='' />
+//       <input id='ville' name='ville' type='text' placeholder='Ville' required='' />
+//       <select id='province' name='province'>
+//         <option value='AB'>Alberta</option>
+//         <option value="BC">Colombie-Britannique</option>
+//         <option value="PE">Île-du-Prince-Édouard</option>
+//         <option value="MB">Manitoba</option>
+//         <option value="NB">Nouveau-Brunswick</option>
+//         <option value="NU">Nunavut</option>
+//         <option value='ON'>Ontario</option>
+//         <option value='QC' selected=''>Québec</option>
+//         <option value="SK">Saskatchewan</option>
+//         <option value="NL">Terre-Neuve-et-Labrador</option>
+//         <option value="NT">Territoires du Nord-Ouest</option>
+//         <option value="YT">Yukon</option>
+//       </select>
+//     </div>
+//     <div>
+//       <input id='idtel1' name="idtel1" type="hidden" />
+//       <input id='telephone1' name='telephone1' type='tel' placeholder='Numéro de téléphone' required='' />
+//       <input id='note1' name='note1' type='text' placeholder='Note' />
+//     </div>
+//     <div>
+//       <input id='idtel2' name="idtel2" type="hidden" />
+//       <input id='telephone2' name='telephone2' type='tel' placeholder='Numéro de téléphone' />
+//       <input id='note2' name='note2' type='text' placeholder='Note' />
+//     </div>
+//     <input id='courriel' name='courriel' type='email' placeholder='Courriel' required='' />
+//     <div>
+//       <button>Enregistrer</button>
+//       <button formaction="" onclick='closeOverlay()'>Annuler</button>
+//     </div>
+//   </form>
+// </div>
+?>
 <script>
   var member = '<?php echo json_encode((array) $member); ?>'
   var memberNo = '<?php echo $member->getNo() ?>';
@@ -90,6 +90,17 @@
 
 
 <?php // ÉTAT DE COMPTE ?>
+<?php
+if (count($sold) > 0) {
+  $total = 0;
+  foreach($sold as $copy) {
+    $total += $copy->getPrice();
+  }
+?>
+  <div style="background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+    Vous avez vendu <?php echo count($sold) ?> livre(s) pour un montant de <?php echo $total ?>$. Pour récupérer votre argent rendez-vous à la BLU lors d'une journée de remise d'argent ou communiquer avec la BLU par courriel.
+  </div>
+<?php } ?>
 <h1>Bonjour <?php echo $member->getPrenom() . " " . $member->getNom(); ?>
   <a href='res/logout.php'>
     <span class='oi' data-glyph='account-logout'></span>
@@ -518,7 +529,29 @@ function getAmountSold($itemId) {
 }
 
 function getAmountInStock($idArticle) {
-  return (getTotalInventory($idArticle) - getAmountSold($idArticle));
+  $query = "SELECT
+              (SELECT COUNT(DISTINCT(copy.id))
+              FROM copy
+              INNER JOIN transaction
+                ON copy.id = transaction.copy
+              WHERE item = 1704) - 
+              (SELECT COUNT(DISTINCT(copy.id))
+              FROM copy
+              INNER JOIN transaction
+                ON copy.id = transaction.copy
+              WHERE item = 1704
+              AND transaction.type IN (SELECT transaction_type.id
+                                      FROM transaction_type
+                                      WHERE transaction_type.code
+                                      IN ('SELL', 'SELL_PARENT', 'AJUST_INVENTORY')))
+            AS quantity;";
+
+  include '#/connection.php';
+  $result = mysqli_query($connection, $query) or die("Query failed: '$query'");
+  $row = mysqli_fetch_assoc($result);
+
+  mysqli_close($connection);
+  return $row['quantity'];
 }
 
 function getTransactionDate($copyId, $transactionType) {

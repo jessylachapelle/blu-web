@@ -1,29 +1,34 @@
 <?php
 if (isset($_POST['email']) && isset($_POST['memberNo']) &&
     (strlen($_POST['memberNo']) == 7 || strlen($_POST['memberNo']) == 9)) {
-  $memberNo = $_POST['memberNo'];
-  $email = $_POST['email'];
-
-  $query = "SELECT no, email
-            FROM member
-            WHERE no LIKE '%$memberNo'
-            AND email='$email'";
+  $query = "SELECT no, email FROM member WHERE no LIKE ? AND email = ?;";
 
   include "../#/connection.php";
-  $result = mysqli_query($connection, $query) or die("Query failed: '$query' " . mysqli_error());
-  $row = mysqli_fetch_assoc($result);
+  $statement = mysqli_prepare($connection, $query);
+  mysqli_stmt_bind_param($statement,'ss', $password, $username);
 
-  if($row['no']) {
+  $password = '%' . strip_tags($_POST['memberNo']);
+  $username = strip_tags($_POST['email']);
+
+  mysqli_stmt_execute($statement);
+  mysqli_stmt_bind_result($statement, $no, $email);
+  mysqli_stmt_fetch($statement);
+
+  mysqli_stmt_close($statement);
+  mysqli_close($connection);
+
+  if ($no) {
     session_start ();
 
-		$_SESSION['email'] = $row['email'];
-		$_SESSION['memberNo'] = $row['no'];
+		$_SESSION['email'] = $email;
+		$_SESSION['memberNo'] = $no;
 		$_SESSION['expire'] = null;
 
-		if(!isset($_POST['connection'])) {
+		if (!isset($_POST['connection'])) {
   		$_SESSION['start'] = time();
       $_SESSION['expire'] = $_SESSION['start'] + 1800;
 		}
+
     return redirect(200);
   }
 }
