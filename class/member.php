@@ -141,5 +141,9 @@ class Membre {
   public function setTelephone($telephone){
     $this->_telephone = $telephone;
   }
+
+  public function isActive() {
+    return $this->getDateDesactivation() >= date('Y-m-d');
+  }
 }
 ?>
