@@ -90,8 +90,13 @@
 
 
 <?php // ÉTAT DE COMPTE ?>
+<?php if (!$member->isActive()) { ?>
+  <div style="background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+    Votre compte est désactivé depuis le <?php echo $member->getDateDesactivation() ?>. Pour obtenir plus d'information <a href="wtfaq.php">cliquez ici</a>.
+  </div>
+<?php } ?>
 <?php
-if (count($sold) > 0) {
+if (count($sold) > 0 && $member->isActive()) {
   $total = 0;
   foreach($sold as $copy) {
     $total += $copy->getPrice();
@@ -108,21 +113,23 @@ if (count($sold) > 0) {
 </h1>
 <div>
   <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
-  <button id='btnRenew'>Renouveler mon compte</button>
-  <script>
-    document.getElementById('btnRenew').addEventListener('click', (event) => {
-      event.preventDefault;
-      HTTP.call('GET', 'res/renew_account.php', null, (res) => {
-        const response = JSON.parse(res);
-        if (response.code === 200) {
-          const button = event.target;
-          button.innerHTML = 'Compte renouvelé';
-          button.setAttribute('disabled', 'disabled');
-          button.setAttribute('class', 'desactive');
-        }
+  <?php if ($member->isActive()) { ?>
+    <button id='btnRenew'>Renouveler mon compte</button>
+    <script>
+      document.getElementById('btnRenew').addEventListener('click', (event) => {
+        event.preventDefault;
+        HTTP.call('GET', 'res/renew_account.php', null, (res) => {
+          const response = JSON.parse(res);
+          if (response.code === 200) {
+            const button = event.target;
+            button.innerHTML = 'Compte renouvelé';
+            button.setAttribute('disabled', 'disabled');
+            button.setAttribute('class', 'desactive');
+          }
+        });
       });
-		});
-  </script>
+    </script>
+  <?php } ?>
 </div>
 <section class='inline'>
     <p><b>État du compte :</b></p>
@@ -188,7 +195,7 @@ foreach($itemFeed AS $item) {
 
 if ($nbArticle > 0) {
   $htmlStr .= "<section>
-                <h2>Artciles suivis</h2>
+                <h2>Articles suivis</h2>
                 <div class='table-wrapper'>
                   <table>
                     <thead>
@@ -225,7 +232,7 @@ foreach($inStock as $e) {
                     </tr>";
 }
 
-if ($nbArticle > 0) {
+if ($nbArticle > 0 && $member->isActive()) {
   $htmlStr .= "<section>
                 <h2>À vendre [$nbArticle articles, $montant $]</h2>
                 <div class='table-wrapper'>
@@ -261,7 +268,7 @@ foreach($sold as $e) {
                     </tr>";
 }
 
-if ($nbArticle > 0) {
+if ($nbArticle > 0 && $member->isActive()) {
   $htmlStr .= "<section>
                 <h2>Vendu [$nbArticle articles, $montant $]</h2>
                 <div class='table-wrapper'>
