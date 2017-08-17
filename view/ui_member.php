@@ -541,12 +541,12 @@ function getAmountInStock($idArticle) {
               FROM copy
               INNER JOIN transaction
                 ON copy.id = transaction.copy
-              WHERE item = 1704) - 
+              WHERE item = $idArticle) - 
               (SELECT COUNT(DISTINCT(copy.id))
               FROM copy
               INNER JOIN transaction
                 ON copy.id = transaction.copy
-              WHERE item = 1704
+              WHERE item = $idArticle
               AND transaction.type IN (SELECT transaction_type.id
                                       FROM transaction_type
                                       WHERE transaction_type.code
