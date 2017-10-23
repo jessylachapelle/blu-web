@@ -9,8 +9,11 @@
 		<main>
 			<?php
       if (isset($_SESSION['email']) && isset($_SESSION['memberNo']) &&
-					($_SESSION['expire'] == null || time() < $_SESSION['expire'])) {
-				include 'view/ui_member.php';
+			(!isset($_SESSION['expire']) || time() < $_SESSION['expire'])) {
+			?>
+				<script>const memberNo = <?php echo $_SESSION['memberNo'] ?>;</script>
+			<?php include 'view/ui_member.1.php'; ?>
+			<?php
 			} else {
 				session_unset();
 				session_destroy();

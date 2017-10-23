@@ -10,249 +10,197 @@
   $sold = getCopiesSold($member->getNo());
   $paid = getCopiesPaid($member->getNo());
 ?>
-<?php
-// <div id='overlay'>
-//   <form id='coord-form' method='post'>
-//     <input id='memberNo' name='memberNo' type="hidden" />
-//     <div>
-//       <input id='address' name='address' type='text' placeholder='Adresse' required='required' />
-//     </div>
-//     <div>
-//       <input id='codepostal' name='codepostal' type='text' placeholder='Code Postal' required='' />
-//       <input id='ville' name='ville' type='text' placeholder='Ville' required='' />
-//       <select id='province' name='province'>
-//         <option value='AB'>Alberta</option>
-//         <option value="BC">Colombie-Britannique</option>
-//         <option value="PE">Île-du-Prince-Édouard</option>
-//         <option value="MB">Manitoba</option>
-//         <option value="NB">Nouveau-Brunswick</option>
-//         <option value="NU">Nunavut</option>
-//         <option value='ON'>Ontario</option>
-//         <option value='QC' selected=''>Québec</option>
-//         <option value="SK">Saskatchewan</option>
-//         <option value="NL">Terre-Neuve-et-Labrador</option>
-//         <option value="NT">Territoires du Nord-Ouest</option>
-//         <option value="YT">Yukon</option>
-//       </select>
-//     </div>
-//     <div>
-//       <input id='idtel1' name="idtel1" type="hidden" />
-//       <input id='telephone1' name='telephone1' type='tel' placeholder='Numéro de téléphone' required='' />
-//       <input id='note1' name='note1' type='text' placeholder='Note' />
-//     </div>
-//     <div>
-//       <input id='idtel2' name="idtel2" type="hidden" />
-//       <input id='telephone2' name='telephone2' type='tel' placeholder='Numéro de téléphone' />
-//       <input id='note2' name='note2' type='text' placeholder='Note' />
-//     </div>
-//     <input id='courriel' name='courriel' type='email' placeholder='Courriel' required='' />
-//     <div>
-//       <button>Enregistrer</button>
-//       <button formaction="" onclick='closeOverlay()'>Annuler</button>
-//     </div>
-//   </form>
-// </div>
-?>
 <script>
-  var member = '<?php echo json_encode((array) $member); ?>'
-  var memberNo = '<?php echo $member->getNo() ?>';
-  var address = '<?php echo $member->getAddress() ?>';
-  var codePostal = '<?php echo $member->getCodePostal() ?>';
-  var ville = '<?php echo $member->getVille() ?>';
-  var province = '<?php echo $member->getProvince() ?>';
-  var courriel = '<?php echo $member->getCourriel() ?>';
-  var idTel1 = '';
-  var tel1 = '';
-  var note1 = '';
-  var idTel2 = '';
-  var tel2 = '';
-  var note2 = '';
-</script>
-
-<?php
-  if ($member->getTelephone() != null) {
-    $noTel = 1;
-
-    foreach ($member->getTelephone() as $phone) {
-      $id = $phone->getId();
-      $number = $phone->getNumero();
-      $note = $phone->getNote();
-
-      echo "<script>
-              idTel$noTel = $id;
-              tel$noTel = '$number';
-              note$noTel = '$note';
-            </script>";
-      $noTel++;
+function request (method, url, callback) {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      try {
+        callback(null, JSON.parse(this.responseText))
+      } catch (err) {
+        callback(null, this.responseText);
+      }
+    } else if (this.readyState === 4) {
+      callback({ status: this.status, message: this.responseText });
     }
-  }
-?>
+  };
+  xhttp.open(method, url, true);
+  xhttp.send();
+}
 
+function populateTable(tableBody, columns, data, extraConfig) {
+  data.forEach((row) => {
+    const tr = document.createElement('tr');
+    
+    if (extraConfig) {
+      extraConfig(tr, row);
+    }
 
-<?php // ÉTAT DE COMPTE ?>
-<?php if (!$member->isActive()) { ?>
-  <div style="background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
-    Votre compte est désactivé depuis le <?php echo $member->getDateDesactivation() ?>. Pour obtenir plus d'information <a href="wtfaq.php">cliquez ici</a>.
-  </div>
-<?php } ?>
-<?php
-if (count($sold) > 0 && $member->isActive()) {
-  $total = 0;
-  foreach($sold as $copy) {
-    $total += $copy->getPrice();
+    columns.forEach((column) => {
+      const td = document.createElement('td');
+      td.innerText = row[column];
+      tr.appendChild(td);
+    });
+
+    tableBody.appendChild(tr);
+  });
+}
+
+function displayMember (member) {
+  console.log(member);
+  const isActive = member.account.isActive;
+  const deactivation = member.account.deactivationDate.toLocaleDateString();
+  
+  if (!isActive) {
+    document.getElementById('deactivationDate').innerText = deactivation;
+    document.getElementById('deactivationBanner').style.display = 'block';
+  } else {
+    const soldCopies = member.account.getSoldCopies();
+
+    if (soldCopies.length) {
+      document.getElementById('soldQty').innerText = soldCopies.length;
+      document.getElementById('soldAmount').innerText = soldCopies.reduce(function (total, copy) {
+        return total + copy.price;
+      }, 0);    
+      document.getElementById('soldBanner').style.display = 'block';
+    }
+
+    const renewButton = document.createElement('button');
+    renewButton.id = 'renewButton';
+    renewButton.innerText = 'Renouveler mon compte';
+    renewButton.addEventListener('click', () => {
+      request('GET', `http://localhost/blu/api/src/server/index.php/member/${memberNo}/renew`, (err) => {
+        if (!err) {
+          renewButton.innerHTML = 'Compte renouvelé';
+          renewButton.setAttribute('disabled', 'disabled');
+          renewButton.setAttribute('class', 'desactive');
+        }
+      });
+    });
+    
+    document.getElementById('actions').appendChild(renewButton);
   }
-?>
-  <div style="background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
-    Vous avez vendu <?php echo count($sold) ?> livre(s) pour un montant de <?php echo $total ?>$. Pour récupérer votre argent rendez-vous à la BLU lors d'une journée de remise d'argent ou communiquer avec la BLU par courriel.
-  </div>
-<?php } ?>
-<h1>Bonjour <?php echo $member->getPrenom() . " " . $member->getNom(); ?>
+
+  document.getElementById('name').innerText = `Bonjour ${member.name}`;
+  document.getElementById('registration').innerText = member.account.registration.toLocaleDateString();
+  document.getElementById('lastActivity').innerText = member.account.lastActivity.toLocaleDateString();
+  document.getElementById('deactivation').innerText = deactivation;
+  document.getElementById('contactInfo').innerText = member.contactInfo;
+
+  if (member.account.itemFeed.length) {
+    const tableBody = document.getElementById('itemFeedBody');
+    const columns = ['title', 'inStock'];
+    populateTable(tableBody, columns, member.account.itemFeed, (tr, row) => {
+      tr.setAttribute('data-item', row.id);
+      tr.addEventListener('click', openItem);
+
+      if (row.inStock) {
+        tr.setAttribute('class', 'enstock');
+      }
+    });
+
+    document.getElementById('itemFeed').style.display = 'block';
+  }
+
+  const addedCopies = member.account.getAddedCopies();
+  console.log(addedCopies);
+  if (addedCopies.length) {
+    const total = addedCopies.reduce((acc, copy) => acc + copy.price, 0);
+    const tableBody = document.getElementById('addedBody');
+    const columns = ['title', 'dateAdded', 'price'];
+    populateTable(tableBody, columns, addedCopies, (tr, row) => {
+      tr.setAttribute('data-item', row.item.id);
+      tr.addEventListener('click', openItem);
+
+      if (row.item.isOutdated) {
+        tr.setAttribute('class', 'outdated');
+      }
+    });
+
+    document.getElementById('addedStat').innerText = `${addedCopies.length} articles, ${total} $`;
+    document.getElementById('added').style.display = 'block';
+  }
+}
+
+request('GET', `http://localhost/blu/api/src/server/index.php/member/${memberNo}`, function (err, res) {
+  if (res) {
+    displayMember(new Member(res));
+  }
+});
+</script>
+<div id="deactivationBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Votre compte est désactivé depuis le <span id="deactivationDate"><span>. Pour obtenir plus d'information <a href="wtfaq.php">cliquez ici</a>.
+</div>
+<div id="soldBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Vous avez vendu <span id="soldQty"></span> livre(s) pour un montant de <span id="soldAmount"></span> $.
+  Pour récupérer votre argent rendez-vous à la BLU lors d'une journée de remise d'argent ou communiquer avec la BLU par courriel.
+</div>
+<h1>
+  <span id="name"></span>
   <a href='res/logout.php'>
     <span class='oi' data-glyph='account-logout'></span>
   </a>
 </h1>
-<div>
+<div id="actions">
   <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
-  <?php if ($member->isActive()) { ?>
-    <button id='btnRenew'>Renouveler mon compte</button>
-    <script>
-      document.getElementById('btnRenew').addEventListener('click', (event) => {
-        event.preventDefault;
-        HTTP.call('GET', 'res/renew_account.php', null, (res) => {
-          const response = JSON.parse(res);
-          if (response.code === 200) {
-            const button = event.target;
-            button.innerHTML = 'Compte renouvelé';
-            button.setAttribute('disabled', 'disabled');
-            button.setAttribute('class', 'desactive');
-          }
-        });
-      });
-    </script>
-  <?php } ?>
 </div>
 <section class='inline'>
-    <p><b>État du compte :</b></p>
-    <table id='infocompte'>
-      <tr>
-        <td>Date d'inscription :</td>
-        <td><?php echo $member->getInscription(); ?></td>
-      </tr>
-      <tr>
-        <td>Date de dernière activité :</td>
-        <td><?php echo $member->getDerniereActivite(); ?></td>
-      </tr>
-      <tr>
-        <td>Date de désactivation :</td>
-        <td><?php echo $member->getDateDesactivation(); ?></td>
-      </tr>
+  <p><b>État du compte :</b></p>
+  <table id='infocompte'>
+    <tr>
+      <td>Date d'inscription :</td>
+      <td id="registration"></td>
+    </tr>
+    <tr>
+      <td>Date de dernière activité :</td>
+      <td id="lastActivity"></td>
+    </tr>
+    <tr>
+      <td>Date de désactivation :</td>
+      <td id="deactivation"></td>
+    </tr>
+  </table>
+</section>
+<section class='inline'>
+  <p><b>Coordonnées :</b></p>
+  <p id="contactInfo"></p>
+  <button onclick='miseAJourCompte()'>Mettre à jour</button>
+</section>
+<section id="itemFeed" style="display: none">
+  <h2>Articles suivis</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>En stock</th>
+        </tr>
+      </thead>
+      <tbody id="itemFeedBody">
+      </tbody>
     </table>
+  </div>
+</section>
+<section id="added" style="display:none;">
+  <h2>À vendre (<span id="addedStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="addedBody">
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <?php
-// COORDONNÉES
-$htmlStr = "<section class='inline'>
-              <p><b>Coordonnées :</b></p>
-              <p>" . $member->getAddress();
-
-$htmlStr .= ",<br/>" . $member->getVille() . ", " . $member->getProvince() . ",<br/>" . $member->getCodePostal() . "<br/>";
-
-if($member->getTelephone() != null) {
-  foreach($member->getTelephone() as $telephone) {
-    $htmlStr .= $telephone->getNumero();
-
-    if($telephone->getNote() != null)
-      $htmlStr .= " (" . $telephone->getNote() . ")";
-    $htmlStr .= "<br/>";
-  }
-}
-
-$htmlStr .= $member->getCourriel() . "</p>" .
-            // "<button onclick='miseAJourCompte()'>Mettre à jour</button>" .
-            "</section>";
-
-// ARTICLE SUIVI
-$nbArticle = 0;
-$htmlTableStr = "";
-
-foreach($itemFeed AS $item) {
-  $id = $item['id'];
-  $title = $item['title'];
-  $quantity = $item['inStock'];
-
-  if ($inStock > 0) {
-    $htmlTableStr .= "<tr class='enstock' data-article='$id' onclick='openItem'>";
-  } else {
-    $htmlTableStr .= "<tr data-article='$id' onclick='openItem'>";
-  }
-
-  $htmlTableStr .= "<td>$title</td>
-                    <td>$quantity</td>
-                    </tr></div>";
-
-  $nbArticle++;
-}
-
-if ($nbArticle > 0) {
-  $htmlStr .= "<section>
-                <h2>Articles suivis</h2>
-                <div class='table-wrapper'>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Titre</th>
-                        <th>En stock</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      $htmlTableStr
-                    </tbody>
-                  </table>
-                </div>
-              </section>";
-}
-
-// ARTICLES À VENDRE
-$nbArticle = 0;
-$montant = 0;
-$htmlTableStr = "";
-foreach($inStock as $e) {
-  $nbArticle++;
-  $montant += $e->getPrice();
-
-  if (itemIsOutdated($e->getArticle())) {
-    $htmlTableStr .= "<tr class='outdated' data-article='" . $e->getArticle() . "' onclick='openItem'>";
-  } else {
-    $htmlTableStr .= "<tr data-article='" . $e->getArticle() . "' onclick='openItem'>";
-  }
-
-  $htmlTableStr .= "<td>" . $e->getTitle() . "</td>
-                    <td>" . $e->getDateAdded() . "</td>
-                    <td>" . $e->getPrice() . " $</td>
-                    </tr>";
-}
-
-if ($nbArticle > 0 && $member->isActive()) {
-  $htmlStr .= "<section>
-                <h2>À vendre [$nbArticle articles, $montant $]</h2>
-                <div class='table-wrapper'>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Titre</th>
-                        <th>Date d’ajout</th>
-                        <th>Prix</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      $htmlTableStr
-                    </tbody>
-                  </table>
-                </div>
-              </section>";
-}
-
 // ARTICLES VENDUS
+$htmlStr = '';
 $nbArticle = 0;
 $montant = 0;
 $htmlTableStr = "";

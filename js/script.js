@@ -45,8 +45,8 @@ function getParameterByName(name, url) {
 	return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function openArticle(e) {
-  document.location.href = `article.php?article=${e.getAttribute('data-article')}`;
+function openItem(event) {
+  document.location.href = `article.php?article=${event.currentTarget.dataset.item}`;
 }
 
 function miseAJourCompte() {
@@ -193,7 +193,7 @@ function displayResults(filtre) {
 
 		const tr = document.createElement('tr');
 		tr.setAttribute("data-article", article.id);
-		tr.setAttribute("onclick", "openArticle(this)");
+		tr.setAttribute("onclick", "openItem");
 
 		const name = document.createElement('td');
 		const author = document.createElement('td');
