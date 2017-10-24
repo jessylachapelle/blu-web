@@ -1,14 +1,3 @@
-function getParams() {
-  return location.search.replace('\?', '').split('&').reduce(function (params, param) {
-    if (param) {
-      const keyValue = param.split('=');
-      params[keyValue[0]] = keyValue[1];
-    }
-
-    return params;
-  }, {});
-}
-
 const params = getParams();
 
 if (params.error) {

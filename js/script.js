@@ -45,10 +45,6 @@ function getParameterByName(name, url) {
 	return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-function openItem(event) {
-  document.location.href = `article.php?article=${event.currentTarget.dataset.item}`;
-}
-
 function miseAJourCompte() {
   document.getElementById('memberNo').value = memberNo;
   document.getElementById('address').value = address;

@@ -24,5 +24,6 @@ if ($device->isTablet()) {
 <script src="js/slideout.js"></script>
 <script src="js/less.js"></script>
 <script src="js/tablesorter.js"></script>
-<script type="text/javascript" defer="defer" src="js/model.js"></script>
-<script type="text/javascript" defer="defer" src="js/script.js"></script>
+<script defer="defer" src="js/model.js"></script>
+<script defer="defer" src="js/newScript.js"></script>
+<script defer="defer" src="js/script.js"></script>

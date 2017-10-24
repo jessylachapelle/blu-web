@@ -12,7 +12,7 @@
 			(!isset($_SESSION['expire']) || time() < $_SESSION['expire'])) {
 			?>
 				<script>const memberNo = <?php echo $_SESSION['memberNo'] ?>;</script>
-			<?php include 'view/ui_member.1.php'; ?>
+			<?php include 'view/ui_member.html'; ?>
 			<?php
 			} else {
 				session_unset();

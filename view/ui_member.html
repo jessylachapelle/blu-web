@@ -1,0 +1,110 @@
+<div id="deactivationBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Votre compte est désactivé depuis le <span id="deactivationDate"><span>. Pour obtenir plus d'information <a href="wtfaq.php">cliquez ici</a>.
+</div>
+<div id="soldBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Vous avez vendu <span id="soldQty"></span> livre(s) pour un montant de <span id="soldAmount"></span> $.
+  Pour récupérer votre argent rendez-vous à la BLU lors d'une journée de remise d'argent ou communiquer avec la BLU par courriel.
+</div>
+<h1>
+  <span id="name"></span>
+  <a href='res/logout.php'>
+    <span class='oi' data-glyph='account-logout'></span>
+  </a>
+</h1>
+<div id="actions">
+  <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
+</div>
+
+<section class='inline'>
+  <p><b>État du compte</b></p>
+  <table id='infocompte'>
+    <tr>
+      <td>Date d'inscription :</td>
+      <td id="registration"></td>
+    </tr>
+    <tr>
+      <td>Date de dernière activité :</td>
+      <td id="lastActivity"></td>
+    </tr>
+    <tr>
+      <td>Date de désactivation :</td>
+      <td id="deactivation"></td>
+    </tr>
+  </table>
+</section>
+<section class='inline'>
+  <p><b>Coordonnées</b></p>
+  <p id="contactInfo"></p>
+  <button onclick="updateInfo">Mettre à jour</button>
+</section>
+
+<section id="itemFeed" style="display: none">
+  <h2>Articles suivis</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>En stock</th>
+        </tr>
+      </thead>
+      <tbody id="itemFeedBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="added" style="display:none;">
+  <h2>À vendre (<span id="addedStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="addedBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="sold" style="display:none;">
+  <h2>Vendu (<span id="soldStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Date de vente</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="soldBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="paid" style="display:none;">
+  <h2>Argent remis (<span id="paidStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Date de vente</th>
+          <th>Date de remise d'argent</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="paidBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+<script src="./view/ui_member.js" defer="defer"></script>

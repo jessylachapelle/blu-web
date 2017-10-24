@@ -116,6 +116,10 @@ class Copy {
     this.member = copy.member ? new Member(copy.member) : null;
   }
 
+  get title() {
+    return this.item.name;
+  }
+
   get priceString() {
     return `${this.price} $`;
   }
@@ -143,22 +147,22 @@ class Copy {
   }
 
   get dateAdded() {
-    return this.transaction.find(t => t.code === Transaction.TYPES.ADD).date;
+    return this.transaction.find(t => t.code === Transaction.TYPES.ADD).date.toLocaleDateString();
   }
 
   get dateSold() {
     const transaction = this.transaction.find(t => Transaction.TYPES.ALL_SELL.indexOf(t.code) > -1);
-    return transaction ? transaction.date : '';
+    return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get datePaid() {
     const transaction = this.transaction.find(t => t.code === Transaction.TYPES.PAY);
-    return transaction ? transaction.date : '';
+    return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get dateReserved() {
     const transaction = this.transaction.find(t => t.code === Transaction.TYPES.RESERVE);
-    return transaction ? transaction.date : '';
+    return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get isDonated() {
@@ -249,6 +253,10 @@ class Account {
 
   getSoldCopies() {
     return this.copies.filter(copy => copy.isSold);
+  }
+
+  getPaidCopies() {
+    return this.copies.filter(copy => copy.isPaid);
   }
 }
 
