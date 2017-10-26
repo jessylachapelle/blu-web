@@ -17,7 +17,7 @@
 			} else {
 				session_unset();
 				session_destroy();
-				include 'view/ui_login.php';
+				include 'view/ui_login.html';
 			}
       ?>
 		</main>

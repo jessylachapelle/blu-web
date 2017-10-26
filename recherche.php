@@ -2,7 +2,6 @@
 <html>
 	<head>
 		<?php include "inc/head.php"; ?>
-		<title>Banque de livres usagés</title>
 	</head>
 	<body>
 		<?php include "inc/header.php"; ?>

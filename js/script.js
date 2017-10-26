@@ -211,23 +211,6 @@ function displayResults(filtre) {
 	sortTables();
 }
 
-function subscribe(e) {
-	const state = e.getAttribute('data-state') === 'subscribed' ? 'unsubscribe' : 'subscribed'
-	const data = new FormData();
-
-	data.append('memberNo', memberNo);
-	data.append('itemId', e.getAttribute('data-item'));
-	data.append('f', state);
-
-	HTTP.call('POST', 'res/article_subscription.php', data, (res) => {
-		if (res) {
-			e.setAttribute('data-state', state);
-		} else {
-			console.log(res);
-		}
-	});
-}
-
 function verifyCoordonates(event) {
 	event.preventDefault();
 

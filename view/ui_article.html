@@ -1,10 +1,7 @@
-<script>
-  const memberNo = <?php echo isset($_SESSION['memberNo']) ? $_SESSION['memberNo'] : null ?>;
-</script>
 <script defer="defer" src="./view/ui_article.js"></script>
 <div style='margin-top: 20px;'>
   <h1 id="title"></h1>
-  <table class="borderless">
+  <table id="infocompte">
     <tr>
       <td class='boldtitre'>Auteur.e.s :</td>
       <td id="author"></td>
