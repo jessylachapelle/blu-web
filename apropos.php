@@ -4,7 +4,7 @@
 		<?php include "inc/head.php"; ?>
 	</head>
 	<body>
-		<?php include "inc/header.php"; ?>
+		<?php include "inc/header.html"; ?>
 		<main>
 			<div>
 				<h1>La BLU</h1>

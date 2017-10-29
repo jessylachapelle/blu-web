@@ -5,7 +5,7 @@
 		<?php include "inc/head.php"; ?>
 	</head>
 	<body>
-		<?php include "inc/header.php"; ?>
+		<?php include "inc/header.html"; ?>
 		<main>
 			<?php
       if (isset($_SESSION['email']) && isset($_SESSION['memberNo']) &&

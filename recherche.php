@@ -5,7 +5,7 @@
 		<script src="js/search.js" defer></script>
 	</head>
 	<body>
-		<?php include "inc/header.php"; ?>
+		<?php include "inc/header.html"; ?>
 		<main>
 			<form id="search-form" method="post">
 				<input id="recherche" name="search" type="search"/>

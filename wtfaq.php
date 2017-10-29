@@ -5,7 +5,7 @@
 		<?php include "inc/head.php"; ?>
 	</head>
 	<body>
-		<?php include "inc/header.php"; ?>
+		<?php include "inc/header.html"; ?>
 		<main>
 			<h1><?php echo $text['title']; ?></h1>
 

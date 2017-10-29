@@ -4,7 +4,7 @@
 		<?php include "inc/head.php"; ?>
 	</head>
 	<body>
-		<?php include "inc/header.php"; ?>
+		<?php include "inc/header.html"; ?>
 		<main>
 			<h1>Contactez-nous</h1>
 			<p>Pour obtenir des informations sur les services de la Banque de livres usagés, vous pouvez vous présenter en personne au local de l’association étudiante ou nous envoyer un email :</p>

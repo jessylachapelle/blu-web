@@ -8,7 +8,7 @@
     </script>
   </head>
   <body>
-    <?php include "inc/header.php"; ?>
+    <?php include "inc/header.html"; ?>
     <main>
       <?php if (isset($_GET['article'])) { ?>
         <script defer="defer" src="./js/item.js"></script>
