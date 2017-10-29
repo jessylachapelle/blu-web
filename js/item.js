@@ -3,9 +3,8 @@ function handleSubscription(event) {
   const state = star.getAttribute('data-state') === 'subscribed' ? 'unsubscribe' : 'subscribed';
   const method = star.getAttribute('data-state') === 'subscribed' ? 'DELETE' : 'GET';
   const id = star.getAttribute('data-item');
-  const url = `http://localhost/blu/api/src/server/index.php/member/${memberNo}/subscription/item/${id}`;
 
-  request(method, url, null, (err) => {
+  request(method, `/member/${memberNo}/subscription/item/${id}`, null, (err) => {
     if (!err) {
       star.setAttribute('data-state', state);
     }
@@ -13,20 +12,22 @@ function handleSubscription(event) {
 }
 
 function displaySubscription(id) {
-  const url = `http://localhost/blu/api/src/server/index.php/member/${memberNo}/isSubscribed/item/${id}`;
-  console.log(url);
-  request('GET', url, null, (err, res) => {
+  request('GET', `/member/${memberNo}/isSubscribed/item/${id}`, null, (err, res) => {
     if (res) {
       const state = res.isSubscribed ? 'subscribed' : 'unsubscribed';
-      const subscribeBtn = document.createElement('i');
-    
-      subscribeBtn.setAttribute('class', 'oi');
-      subscribeBtn.setAttribute('data-glyph', 'star')
-      subscribeBtn.setAttribute('data-item', id);
-      subscribeBtn.setAttribute('data-state', state);
-      subscribeBtn.addEventListener('click', handleSubscription);
-    
-      document.getElementById('title').appendChild(subscribeBtn);
+      const attributes = {
+        class: 'oi',
+        data: {
+          glyph: 'star',
+          item: id,
+          state,
+        },
+      };
+      const events = {
+        click: handleSubscription,
+      };
+
+      createElement('i', attributes, events, document.getElementById('title'));
     }
   });
 }
@@ -54,8 +55,8 @@ function displayItem(item) {
 }
 
 const itemId = getParams().article;
-const url = `http://localhost/blu/api/src/server/index.php/item/${itemId}`;
-request('GET', url, null, (err, res) => {
+
+request('GET', `/item/${itemId}`, null, (err, res) => {
   if (res) {
     displayItem(new Item(res));
   }

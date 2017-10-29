@@ -8,13 +8,36 @@ function setCopyTableRowAttributes(tr, row) {
 }
 
 function renewAccount() {
-  request('GET', `http://localhost/blu/api/src/server/index.php/member/${memberNo}/renew`, null, (err) => {
+  request('GET', `/member/${memberNo}/renew`, null, (err) => {
     if (!err) {
       renewButton.innerHTML = 'Compte renouvelé';
       renewButton.setAttribute('disabled', 'disabled');
       renewButton.setAttribute('class', 'desactive');
     }
   });
+}
+
+function createTooltip(event) {
+  tooltip = document.createElement('div');
+  const row = event.target.parentNode;
+  const p = document.createElement('p');
+  const tPosX = row.getBoundingClientRect().left + row.getBoundingClientRect().width + 20;
+  const tPosY = row.getBoundingClientRect().top;
+	const text = 'Cet article est désuet et ne sera plus vendu à la BLU. Si vous désirez le récupérer, veuillez contacter la BLU. Le cas échéant, il sera envoyé dans un programme de récupération de livres.';
+
+  p.appendChild(document.createTextNode(text));
+  tooltip.appendChild(p);
+  tooltip.setAttribute('id', 'tooltip');
+  tooltip.setAttribute('style', `top: ${tPosY}px; left: ${tPosX}px;`);
+
+  document.body.appendChild(tooltip);
+}
+
+function deleteTooltip(event) {
+  if (tooltip != null) {
+		document.body.removeChild(document.getElementById('tooltip'));
+    tooltip = null;
+  }
 }
 
 function displayMember (member) {
@@ -92,9 +115,18 @@ function displayMember (member) {
   });
 }
 
-const url = `http://localhost/blu/api/src/server/index.php/member/${memberNo}`;
-request('GET', url, null, (err, res) => {
+request('GET', `/member/${memberNo}`, null, (err, res) => {
   if (res) {
     displayMember(new Member(res));
   }
 });
+
+
+// TODO: Add to copy table creation
+// window.addEventListener('scroll', deleteTooltip);
+
+// const outdated = document.getElementsByClassName('outdated');
+// for (let i = 0; i < outdated.length; i++) {
+//   outdated[i].addEventListener('mouseover', createTooltip);
+//   outdated[i].addEventListener('mouseout', deleteTooltip);
+// }
