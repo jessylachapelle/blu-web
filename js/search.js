@@ -1,15 +1,16 @@
 function search(event) {
-	event.preventDefault();
+  event.preventDefault();
+  const value = event.target.search.value;
+  const url = `${window.location.origin}${window.location.pathname}`;
   const data = {
-    search: event.target.search.value,
+    search: value,
   };
-
   
-  request('GET', '/item', data, (err, res) => {
-    if (res) {
-      displayResults(res.map(item => new Item(item)));
-    }
-  });
+  // window.location.replace(`${url}?r=${value}`);  
+
+  request('GET', '/item', data, (err, res) =>
+    res && Array.isArray(res) && displayResults((res).map(item => new Item(item)))
+  );
 }
 
 function displayResults(items) {
