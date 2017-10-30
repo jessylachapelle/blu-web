@@ -35,7 +35,7 @@
 <section class='inline'>
   <p><b>Coordonnées</b></p>
   <p id="contactInfo"></p>
-  <button onclick="updateInfo">Mettre à jour</button>
+  <button onclick="openModal">Mettre à jour</button>
 </section>
 
 <section id="itemFeed" style="display: none">
@@ -107,4 +107,122 @@
     </table>
   </div>
 </section>
+
+<div id="overlay" class='close overlay'>
+  <form id='updateForm' class="modal" method='post'>
+    <div class="modal-header">
+      <span class="glyph-wrapper">
+        <i class="close oi" data-glyph="x"></i>
+      </span>
+      <h2>Mettre à jour vos coordonnées</h2>
+    </div>
+    <div class="modal-body">
+      <div>
+        <label for="address">Adresse postale</label>
+        <input id='address' name='address' type='text' required='required' />
+      </div>
+      <div>
+        <label for="city">Ville</label>
+        <input id='city' name='city' type='text' required='' />
+      </div>
+      <div>
+        <label for="state">Province</label>
+        <select id='state' name='state'>
+          <option value='AB'>Alberta</option>
+          <option value="BC">Colombie-Britannique</option>
+          <option value="PE">Île-du-Prince-Édouard</option>
+          <option value="MB">Manitoba</option>
+          <option value="NB">Nouveau-Brunswick</option>
+          <option value="NU">Nunavut</option>
+          <option value='ON'>Ontario</option>
+          <option value='QC' selected=''>Québec</option>
+          <option value="SK">Saskatchewan</option>
+          <option value="NL">Terre-Neuve-et-Labrador</option>
+          <option value="NT">Territoires du Nord-Ouest</option>
+          <option value="YT">Yukon</option>
+        </select>
+      </div>
+      <div>
+        <label for="zip">Code postal</label>
+        <input id="zip" name="zip" type='text' placeholder='A1A 1A1' required='' />
+      </div>
+      <div>
+        <label for="phone1">Téléphone 1</label>
+        <input id='phone1' name='telephone1' type='tel' />
+        <label class="note" for="note1">Note</label>
+        <input id='note1' name='note1' type='text' />
+      </div>
+      <div>
+        <label for="phone2">Téléphone 2</label>
+        <input id='phone2' name='phone2' type='tel' />
+        <label class="note" for="note2">Note</label>
+        <input id='note2' name='note2' type='text' />
+      </div>
+      <div>
+        <label for="email">Courriel</label>
+        <input id='email' name='email' type='email' required='' />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="close">Annuler</button>
+      <button type="submit">Enregistrer</button>
+    </div>
+  </form>
+</div>
 <script src="./js/member.js" defer="defer"></script>
+<script>
+  function openModal(event) {
+    event.preventDefault();
+    document.getElementById('overlay').style.display = 'block';
+  }
+
+  const closable = document.getElementsByClassName('close');
+  const getFormData = () => {
+    const data = {
+      no: memberNo,
+      address: document.getElementById('address').value,
+      zip: document.getElementById('zip').value,
+      city: {
+        name: document.getElementById('city').value,
+        state: {
+          code: document.getElementById('state').value,
+        },
+      },
+      phone: [],
+      email: document.getElementById('email').value,
+    }
+
+    for (let i = 1; i <= 2; i++) {
+      if (document.getElementById(`phone${i}`).value) {
+        data.phone.push({
+          number: document.getElementById(`phone${i}`).value,
+          note: document.getElementById(`note${i}`).value,
+        })
+      }
+    }
+
+    return data;
+  }
+
+  const formatData = (data) => {
+    data.zip = data.zip.replace(/\W/g, '');
+    data.phone.forEach(phone => phone.number = phone.number.replace(/\D/g, ''));
+
+    return new Member(data);
+  }
+
+  for (let i = 0; i < closable.length; i++) {
+    closable[i].addEventListener('click', (event) => {
+      if ((event.target.getAttribute('class') || '').includes('close')) {
+        document.getElementById('overlay').style.display = 'none';
+      }
+    })
+  }
+
+  document.getElementById('updateForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = formatData(getFormData());
+    
+    console.log(data);
+  });
+</script>

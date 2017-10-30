@@ -6,7 +6,6 @@
 <meta name="robots" content="index, follow" />
 <link rel="stylesheet" href="css/open-iconic.css"/>
 <script src="lib/jquery.js"></script>
-<script src="lib/less.js"></script>
 <script src="lib/tablesorter.js"></script>
 <?php
 require_once 'lib/mobileDetect.php';
@@ -26,5 +25,6 @@ if ($device->isMobile()) {
   <link rel="stylesheet/less" href="css/desktop.less" />
 <?php } ?>
 
+<script src="lib/less.js"></script>
 <script defer="defer" src="js/model.js"></script>
 <script defer="defer" src="js/script.js"></script>
