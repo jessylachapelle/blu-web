@@ -50,14 +50,17 @@ function displayItem(item) {
     const avg = Math.round(inStock.reduce((acc, cur) => cur.price + acc, 0) / inStock.length);
     document.getElementById('quantity').innerText = `Nous possédons ${inStock.length} exemplaire(s) en stock de cet article et le prix moyen de vente est de ${avg} $`
   } else {
-    document.getElementById('quantity').innerText = `Nous ne possédons pas d'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informer d'un éventuel approvisionnement.`
+    document.getElementById('quantity').innerText = `Nous ne possédons pas d'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informé.e d'un éventuel approvisionnement.`
   }
 }
 
 const itemId = getParams().article;
 
 request('GET', `/item/${itemId}`, null, (err, res) => {
-  if (res) {
-    displayItem(new Item(res));
+  if (err) {
+    alert('Une erreur est survenue en récupérant les informations de l\'ouvrage. Si vous continuez à rencontrer des erreurs veuillez nous en faire part.');
+    return;
   }
+  
+  displayItem(new Item(res));
 });

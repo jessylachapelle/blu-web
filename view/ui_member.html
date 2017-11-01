@@ -35,7 +35,7 @@
 <section class='inline'>
   <p><b>Coordonnées</b></p>
   <p id="contactInfo"></p>
-  <button onclick="openModal">Mettre à jour</button>
+  <button id="updateInfo">Mettre à jour</button>
 </section>
 
 <section id="itemFeed" style="display: none">
@@ -108,7 +108,7 @@
   </div>
 </section>
 
-<div id="overlay" class='close overlay'>
+<div id="overlay" class='overlay'>
   <form id='updateForm' class="modal" method='post'>
     <div class="modal-header">
       <span class="glyph-wrapper">
@@ -135,7 +135,7 @@
           <option value="NB">Nouveau-Brunswick</option>
           <option value="NU">Nunavut</option>
           <option value='ON'>Ontario</option>
-          <option value='QC' selected=''>Québec</option>
+          <option value='QC'>Québec</option>
           <option value="SK">Saskatchewan</option>
           <option value="NL">Terre-Neuve-et-Labrador</option>
           <option value="NT">Territoires du Nord-Ouest</option>
@@ -170,59 +170,3 @@
   </form>
 </div>
 <script src="./js/member.js" defer="defer"></script>
-<script>
-  function openModal(event) {
-    event.preventDefault();
-    document.getElementById('overlay').style.display = 'block';
-  }
-
-  const closable = document.getElementsByClassName('close');
-  const getFormData = () => {
-    const data = {
-      no: memberNo,
-      address: document.getElementById('address').value,
-      zip: document.getElementById('zip').value,
-      city: {
-        name: document.getElementById('city').value,
-        state: {
-          code: document.getElementById('state').value,
-        },
-      },
-      phone: [],
-      email: document.getElementById('email').value,
-    }
-
-    for (let i = 1; i <= 2; i++) {
-      if (document.getElementById(`phone${i}`).value) {
-        data.phone.push({
-          number: document.getElementById(`phone${i}`).value,
-          note: document.getElementById(`note${i}`).value,
-        })
-      }
-    }
-
-    return data;
-  }
-
-  const formatData = (data) => {
-    data.zip = data.zip.replace(/\W/g, '');
-    data.phone.forEach(phone => phone.number = phone.number.replace(/\D/g, ''));
-
-    return new Member(data);
-  }
-
-  for (let i = 0; i < closable.length; i++) {
-    closable[i].addEventListener('click', (event) => {
-      if ((event.target.getAttribute('class') || '').includes('close')) {
-        document.getElementById('overlay').style.display = 'none';
-      }
-    })
-  }
-
-  document.getElementById('updateForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const data = formatData(getFormData());
-    
-    console.log(data);
-  });
-</script>

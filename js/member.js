@@ -1,9 +1,33 @@
+function getFormData() {
+  const data = new Member(member);
+
+  data.address = document.getElementById('address').value;
+  data.zip = document.getElementById('zip').value.replace(/\W/g, '');
+  data.city.name = document.getElementById('city').value;
+  data.city.state.code = document.getElementById('state').value;
+  data.email = document.getElementById('email').value;
+  data.phone = [];
+
+  for (let i = 1; i <= 2; i++) {
+    if (document.getElementById(`phone${i}`).value) {
+      data.phone.push(new Phone({
+        number: document.getElementById(`phone${i}`).value.replace(/\D/g, ''),
+        note: document.getElementById(`note${i}`).value,
+      }))
+    }
+  }
+
+  return data;
+}
+
 function setCopyTableRowAttributes(tr, row) {
-  tr.setAttribute('data-item', row.id);
+  tr.setAttribute('data-item', row.item.id);
   tr.addEventListener('click', openItem);
 
-  if (row.inStock) {
-    tr.setAttribute('class', 'enstock');
+  if (!row.item.status.VALID && row.isAdded) {
+    tr.setAttribute('class', 'outdated');
+    tr.addEventListener('mouseover', createTooltip);
+    tr.addEventListener('mouseout', deleteTooltip);
   }
 }
 
@@ -13,6 +37,10 @@ function renewAccount() {
       renewButton.innerHTML = 'Compte renouvelé';
       renewButton.setAttribute('disabled', 'disabled');
       renewButton.setAttribute('class', 'desactive');
+
+      member.account.lastActivity = new Date();
+      document.getElementById('lastActivity').innerText = member.account.lastActivity.toLocaleDateString();
+      document.getElementById('deactivation').innerText = member.account.deactivationDate.toLocaleDateString();
     }
   });
 }
@@ -115,18 +143,59 @@ function displayMember (member) {
   });
 }
 
+function closeOverlay() {
+  document.getElementById('overlay').style.display = 'none';  
+}
+
+let member;
+
 request('GET', `/member/${memberNo}`, null, (err, res) => {
   if (res) {
-    displayMember(new Member(res));
+    member = new Member(res);
+    displayMember(member);
   }
 });
 
+window.addEventListener('scroll', deleteTooltip);
 
-// TODO: Add to copy table creation
-// window.addEventListener('scroll', deleteTooltip);
+const closable = document.getElementsByClassName('close');
 
-// const outdated = document.getElementsByClassName('outdated');
-// for (let i = 0; i < outdated.length; i++) {
-//   outdated[i].addEventListener('mouseover', createTooltip);
-//   outdated[i].addEventListener('mouseout', deleteTooltip);
-// }
+for (let i = 0; i < closable.length; i++) {
+  closable[i].addEventListener('click', closeOverlay);
+}
+
+document.getElementById('updateInfo').addEventListener('click', (event) => {
+  event.preventDefault();
+  document.getElementById('address').value = member.address;
+  document.getElementById('city').value = member.city.name;
+  document.getElementById('zip').value = member.zip;
+  document.getElementById('state').value = member.city.state.code;
+  document.getElementById('phone1').value = member.phone[0].number;
+  document.getElementById('note1').value = member.phone[0].note; 
+  document.getElementById('phone2').value = member.phone[1].number;
+  document.getElementById('note2').value = member.phone[1].note; 
+  document.getElementById('email').value = member.email;
+  document.getElementById('overlay').style.display = 'block';
+});
+
+document.getElementById('updateForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = getFormData();
+
+  if (!/.@./.test(data.email)) {
+    alert('Courriel invalide');
+  }
+
+  request('POST', `/member/${memberNo}`, data, (err, res) => {
+    if (err) {
+      console.log(err);
+      alert('Une erreur c\'est produite. Veuillez réessayer plus tard');
+      closeOverlay();      
+      return;
+    }
+
+    member = data;
+    document.getElementById('contactInfo').innerText = member.contactInfo;
+    closeOverlay();
+  });
+});
