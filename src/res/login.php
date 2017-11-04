@@ -1,9 +1,11 @@
 <?php
+include "../#/connection.php";
+
 if (isset($_POST['email']) && isset($_POST['memberNo']) &&
     (strlen($_POST['memberNo']) == 7 || strlen($_POST['memberNo']) == 9)) {
   $query = "SELECT no, email FROM member WHERE no LIKE ? AND email = ?;";
 
-  include "../#/connection.php";
+  $connection = getConnection();
   $statement = mysqli_prepare($connection, $query);
   mysqli_stmt_bind_param($statement,'ss', $password, $username);
 
