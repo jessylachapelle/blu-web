@@ -4,7 +4,7 @@
   <head>
     <?php include "inc/head.php"; ?>
     <script>
-      const memberNo = <?php echo isset($_SESSION['memberNo']) ? $_SESSION['memberNo'] : null ?>;
+      const memberNo = <?php echo isset($_SESSION['memberNo']) ? $_SESSION['memberNo'] : 0 ?>;
     </script>
   </head>
   <body>
