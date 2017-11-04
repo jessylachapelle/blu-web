@@ -1,4 +1,13 @@
 <?php
+function headersToString($headers) {
+  $headersString = "";
+  foreach($headers as $header) {
+    $headersString .= "$header\r\n";
+  }
+
+  return $headersString;
+}
+
 if (isset($_POST['name']) && $_POST['email'] && $_POST['message'] && $_POST['subject']) {
   $name = strip_tags($_POST['name']);
   $email = strip_tags($_POST['email']);
@@ -26,23 +35,13 @@ if (isset($_POST['name']) && $_POST['email'] && $_POST['message'] && $_POST['sub
     "Content-type: text/html; charset=utf-8",
   ];
 
-  $headersString = "";
-  foreach($headers as $header) {
-    $headersString .= "$header\r\n";
-  }
-
-  $clientHeadersString = "";
-  foreach($clientHeaders as $header) {
-    $clientHeadersString .= "$header\r\n";
-  }
-
-  $success = mail($emailBLU, $subject, $message, $headers);
-
+  $success = mail($emailBLU, $subject, $message, headersToString($headers));
+  
   if ($success) {
-    mail($email, $confirmationSubject, $confirmationMessage, $clientHeadersString);
+    mail($email, $confirmationSubject, $confirmationMessage, headersToString($clientHeaders));
     return header("Location: ../contact.php?sent=true");
   }
 }
 
-return header("Location: ../contact.php?error=403&sent=false");
+return header("Location: ../contact.php?sent=false&name=$name&email=$email&subject=$subject&message=$message");
 ?>
