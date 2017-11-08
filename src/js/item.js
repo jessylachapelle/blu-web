@@ -33,8 +33,6 @@ function displaySubscription(id) {
 }
 
 function displayItem(item) {
-  const inStock = item.copies.filter(copy => copy.isAdded);
-
   document.getElementById('title').appendChild(document.createTextNode(item.name));
   document.getElementById('author').innerText = item.authorString;
   document.getElementById('editor').innerText = item.editor;
@@ -46,9 +44,8 @@ function displayItem(item) {
     displaySubscription(item.id, title);
   }
 
-  if (inStock.length > 0) {
-    const avg = Math.round(inStock.reduce((acc, cur) => cur.price + acc, 0) / inStock.length);
-    document.getElementById('quantity').innerText = `Nous possédons ${inStock.length} exemplaire(s) en stock de cet article et le prix moyen de vente est de ${avg} $`
+  if (item.copies.quantity > 0) {
+    document.getElementById('quantity').innerText = `Nous possédons ${iten.copies.quantity} exemplaire(s) en stock de cet article et le prix moyen de vente est de ${items.copies.averagePrice} $`
   } else {
     document.getElementById('quantity').innerText = `Nous ne possédons pas d'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informé.e d'un éventuel approvisionnement.`
   }

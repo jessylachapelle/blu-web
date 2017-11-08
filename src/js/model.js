@@ -23,8 +23,13 @@ class Item {
     this.isBook = item.isBook || false;
     this.ean13 = item.ean13;
     this.author = item.author ? item.author.map(author => new Author(author)) : [];
-    this.copies = item.copies ? item.copies.map(copy => new Copy(copy)) : [];
     this.status = item.status || {};
+    
+    if (Array.isArray(item.copies)) {
+      this.copies = item.copies ? item.copies.map(copy => new Copy(copy)) : [];
+    } else {
+      this.copies = item.copies;
+    }
   }
 
   getStatus() {
