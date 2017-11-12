@@ -1,0 +1,172 @@
+<div id="deactivationBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Votre compte est désactivé depuis le <span id="deactivationDate"><span>. Pour obtenir plus d'information <a href="wtfaq.php">cliquez ici</a>.
+</div>
+<div id="soldBanner" style="display: none; background-color: #F4F1DC; padding: 15px; margin-top: 30px;">
+  Vous avez vendu <span id="soldQty"></span> livre(s) pour un montant de <span id="soldAmount"></span> $.
+  Pour récupérer votre argent rendez-vous à la BLU lors d'une journée de remise d'argent ou communiquer avec la BLU par courriel.
+</div>
+<h1>
+  <span id="name"></span>
+  <a href='res/logout.php'>
+    <span class='oi' data-glyph='account-logout'></span>
+  </a>
+</h1>
+<div id="actions">
+  <button><a href="files/formulaire.pdf" target="_blank" style="text-decoration:none;color:#FFF;">Vendre des Livres</a></button>
+</div>
+
+<section class='inline'>
+  <p><b>État du compte</b></p>
+  <table id='infocompte'>
+    <tr>
+      <td>Date d'inscription :</td>
+      <td id="registration"></td>
+    </tr>
+    <tr>
+      <td>Date de dernière activité :</td>
+      <td id="lastActivity"></td>
+    </tr>
+    <tr>
+      <td>Date de désactivation :</td>
+      <td id="deactivation"></td>
+    </tr>
+  </table>
+</section>
+<section class='inline'>
+  <p><b>Coordonnées</b></p>
+  <p id="contactInfo"></p>
+  <button id="updateInfo">Mettre à jour</button>
+</section>
+
+<section id="itemFeed" style="display: none">
+  <h2>Articles suivis</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>En stock</th>
+        </tr>
+      </thead>
+      <tbody id="itemFeedBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="added" style="display:none;">
+  <h2>À vendre (<span id="addedStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="addedBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="sold" style="display:none;">
+  <h2>Vendu (<span id="soldStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Date de vente</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="soldBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="paid" style="display:none;">
+  <h2>Argent remis (<span id="paidStat"></span>)</h2>
+  <div class='table-wrapper'>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d’ajout</th>
+          <th>Date de vente</th>
+          <th>Date de remise d'argent</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody id="paidBody">
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div id="overlay" class='overlay'>
+  <form id='updateForm' class="modal" method='post'>
+    <div class="modal-header">
+      <span class="glyph-wrapper">
+        <i class="close oi" data-glyph="x"></i>
+      </span>
+      <h2>Mettre à jour vos coordonnées</h2>
+    </div>
+    <div class="modal-body">
+      <div>
+        <label for="address">Adresse postale</label>
+        <input id='address' name='address' type='text' required='required' />
+      </div>
+      <div>
+        <label for="city">Ville</label>
+        <input id='city' name='city' type='text' required='' />
+      </div>
+      <div>
+        <label for="state">Province</label>
+        <select id='state' name='state'>
+          <option value='AB'>Alberta</option>
+          <option value="BC">Colombie-Britannique</option>
+          <option value="PE">Île-du-Prince-Édouard</option>
+          <option value="MB">Manitoba</option>
+          <option value="NB">Nouveau-Brunswick</option>
+          <option value="NU">Nunavut</option>
+          <option value='ON'>Ontario</option>
+          <option value='QC'>Québec</option>
+          <option value="SK">Saskatchewan</option>
+          <option value="NL">Terre-Neuve-et-Labrador</option>
+          <option value="NT">Territoires du Nord-Ouest</option>
+          <option value="YT">Yukon</option>
+        </select>
+      </div>
+      <div>
+        <label for="zip">Code postal</label>
+        <input id="zip" name="zip" type='text' placeholder='A1A 1A1' required='' />
+      </div>
+      <div>
+        <label for="phone1">Téléphone 1</label>
+        <input id='phone1' name='telephone1' type='tel' />
+        <label class="note" for="note1">Note</label>
+        <input id='note1' name='note1' type='text' />
+      </div>
+      <div>
+        <label for="phone2">Téléphone 2</label>
+        <input id='phone2' name='phone2' type='tel' />
+        <label class="note" for="note2">Note</label>
+        <input id='note2' name='note2' type='text' />
+      </div>
+      <div>
+        <label for="email">Courriel</label>
+        <input id='email' name='email' type='email' required='' />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="close">Annuler</button>
+      <button type="submit">Enregistrer</button>
+    </div>
+  </form>
+</div>
+<script src="./js/member.js" defer="defer"></script>
