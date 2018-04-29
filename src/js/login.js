@@ -1,7 +1,7 @@
-const params = getParams();
+var params = getParams();
 
 if (params.error) {
-  const errorMessage = {
+  var errorMessage = {
     401: 'Erreur de connexion, veuillez vérifier votre adresse courriel et votre numéro de dossier',
   };
 

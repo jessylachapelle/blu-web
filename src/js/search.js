@@ -1,31 +1,35 @@
 function search(event) {
   event.preventDefault();
-  const value = event.target.search.value;
-  const url = `${window.location.origin}${window.location.pathname}`;
-  const data = {
+  var value = event.target.search.value;
+  var url = window.location.origin + window.location.pathname;
+  var data = {
     search: value,
   };
   
-  // window.location.replace(`${url}?r=${value}`);  
+  // window.location.replace(url + '?r=' + value);
 
-  request('GET', '/item', data, (err, res) =>
-    res && Array.isArray(res) && displayResults((res).map(item => new Item(item)))
-  );
+  request('GET', '/item', data, function (err, res) {
+  	if (res && Array.isArray(res)) {
+    	displayResults((res).map(function (item) {
+    		return new Item(item);
+      }));
+		}
+  });
 }
 
 function displayResults(items) {
-	document.getElementById('resultat').innerHTML = "";
+	document.getElementById('resultat').innerHTML = '';
 
-	const table = document.createElement('table');
+	var table = document.createElement('table');
 	table.setAttribute('class', 'tablesorter');
 
-	const thead = document.createElement('thead');
-	const tbody = document.createElement('tbody');
+	var thead = document.createElement('thead');
+	var tbody = document.createElement('tbody');
 
-	const headRow = document.createElement('tr');
-	const headName = document.createElement('th');
-	const headAuthor = document.createElement('th');
-	const headEditor = document.createElement('th');
+	var headRow = document.createElement('tr');
+	var headName = document.createElement('th');
+	var headAuthor = document.createElement('th');
+	var headEditor = document.createElement('th');
 
 	headName.appendChild(document.createTextNode("Titre"));
 	headAuthor.appendChild(document.createTextNode("Auteur(s)"));
@@ -37,14 +41,14 @@ function displayResults(items) {
 	thead.appendChild(headRow);
 	table.appendChild(thead);
 
-	items.forEach((item) => {
-		const tr = document.createElement('tr');
+	items.forEach(function (item) {
+		var tr = document.createElement('tr');
 		tr.setAttribute('data-item', item.id);
 		tr.addEventListener('click', openItem);
 
-		const name = document.createElement('td');
-		const author = document.createElement('td');
-		const editor = document.createElement('td');
+		var name = document.createElement('td');
+		var author = document.createElement('td');
+		var editor = document.createElement('td');
 
 		name.appendChild(document.createTextNode(item.name));
 		author.appendChild(document.createTextNode(item.authorString));
@@ -64,7 +68,7 @@ function displayResults(items) {
 
 document.getElementById('search-form').addEventListener('submit', search);
 
-const searchParam = getParams().r;
+var searchParam = getParams().r;
 
 if (searchParam) {
 	document.getElementById('recherche').value = searchParam;

@@ -1,10 +1,10 @@
 function handleSubscription(event) {
-  const star = event.currentTarget;
-  const state = star.getAttribute('data-state') === 'subscribed' ? 'unsubscribe' : 'subscribed';
-  const method = star.getAttribute('data-state') === 'subscribed' ? 'DELETE' : 'GET';
-  const id = star.getAttribute('data-item');
+  var star = event.currentTarget;
+  var state = star.getAttribute('data-state') === 'subscribed' ? 'unsubscribe' : 'subscribed';
+  var method = star.getAttribute('data-state') === 'subscribed' ? 'DELETE' : 'GET';
+  var id = star.getAttribute('data-item');
 
-  request(method, `/member/${memberNo}/subscription/item/${id}`, null, (err) => {
+  request(method, '/member/' + memberNo + '/subscription/item/' + id, null, function (err) {
     if (!err) {
       star.setAttribute('data-state', state);
     }
@@ -12,18 +12,18 @@ function handleSubscription(event) {
 }
 
 function displaySubscription(id) {
-  request('GET', `/member/${memberNo}/isSubscribed/item/${id}`, null, (err, res) => {
+  request('GET', '/member/' + memberNo + '/isSubscribed/item/' + id, null, function (err, res) {
     if (res) {
-      const state = res.isSubscribed ? 'subscribed' : 'unsubscribed';
-      const attributes = {
+      var state = res.isSubscribed ? 'subscribed' : 'unsubscribed';
+      var attributes = {
         class: 'oi',
         data: {
           glyph: 'star',
           item: id,
-          state,
+          state: state,
         },
       };
-      const events = {
+      var events = {
         click: handleSubscription,
       };
 
@@ -45,15 +45,15 @@ function displayItem(item) {
   }
 
   if (item.copies.quantity > 0) {
-    document.getElementById('quantity').innerText = `Nous possédons ${iten.copies.quantity} exemplaire(s) en stock de cet article et le prix moyen de vente est de ${items.copies.averagePrice} $`
+    document.getElementById('quantity').innerText = 'Nous possédons ' + iten.copies.quantity + 'exemplaire(s) en stock de cet article et le prix moyen de vente est de ' + items.copies.averagePrice + '$';
   } else {
-    document.getElementById('quantity').innerText = `Nous ne possédons pas d'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informé.e d'un éventuel approvisionnement.`
+    document.getElementById('quantity').innerText = 'Nous ne possédons pas d\'exemplaire en stock pour cet article. Vous pouvez le suivre pour être informé.e d\'un éventuel approvisionnement.';
   }
 }
 
-const itemId = getParams().article;
+var itemId = getParams().article;
 
-request('GET', `/item/${itemId}`, null, (err, res) => {
+request('GET', '/item/' + itemId, null, function (err, res) {
   if (err) {
     alert('Une erreur est survenue en récupérant les informations de l\'ouvrage. Si vous continuez à rencontrer des erreurs veuillez nous en faire part.');
     return;

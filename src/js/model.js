@@ -7,7 +7,7 @@ class Author {
   }
 
   toString() {
-    return this.firstName !== '' ? `${this.lastName} ${this.firstName}` : this.lastName;
+    return this.firstName !== '' ? this.lastName + ' ' + this.firstName : this.lastName;
   }
 }
 
@@ -22,11 +22,15 @@ class Item {
     this.subject = item.subject || {};
     this.isBook = item.isBook || false;
     this.ean13 = item.ean13;
-    this.author = item.author ? item.author.map(author => new Author(author)) : [];
+    this.author = item.author ? item.author.map(function (author) {
+      return new Author(author);
+    }) : [];
     this.status = item.status || {};
-    
+
     if (Array.isArray(item.copies)) {
-      this.copies = item.copies ? item.copies.map(copy => new Copy(copy)) : [];
+      this.copies = item.copies ? item.copies.map(function (copy) {
+        return new Copy(copy);
+      }) : [];
     } else {
       this.copies = item.copies;
     }
@@ -55,7 +59,9 @@ class Item {
   }
 
   get isInStock() {
-    return this.copies.filter(copy => copy.isAdded).length > 0;
+    return this.copies.filter(function (copy) {
+      return copy.isAdded;
+    }).length > 0;
   }
 
   get isValid() {
@@ -71,7 +77,9 @@ class Item {
   }
 
   get authorString() {
-    return this.author.length ? this.author.map(author => author.toString()).join(', ') : '';
+    return this.author.length ? this.author.map(function (author) {
+      return author.toString();
+    }).join(', ') : '';
   }
 
   static get STATUS() {
@@ -116,7 +124,9 @@ class Copy {
     const copy = data || {};
     this.id = copy.id || 0;
     this.price = +copy.price || 0;
-    this.transaction = (copy.transaction || []).map(t => new Transaction(t));
+    this.transaction = (copy.transaction || []).map(function (t) {
+      return new Transaction(t);
+    });
     this.item = copy.item ? new Item(copy.item) : null;
     this.member = copy.member ? new Member(copy.member) : null;
   }
@@ -126,13 +136,13 @@ class Copy {
   }
 
   get priceString() {
-    return `${this.price} $`;
+    return this.price + '$';
   }
 
   get status() {
     const transactions = {};
 
-    this.transaction.forEach((transaction) => {
+    this.transaction.forEach(function (transaction) {
       transactions[transaction.code] = true;
     });
 
@@ -152,26 +162,36 @@ class Copy {
   }
 
   get dateAdded() {
-    return this.transaction.find(t => t.code === Transaction.TYPES.ADD).date.toLocaleDateString();
+    return this.transaction.filter(function (t) {
+      return t.code === Transaction.TYPES.ADD;
+    })[0].date.toLocaleDateString();
   }
 
   get dateSold() {
-    const transaction = this.transaction.find(t => Transaction.TYPES.ALL_SELL.indexOf(t.code) > -1);
+    const transaction = this.transaction.filter(function (t) {
+      return Transaction.TYPES.ALL_SELL.indexOf(t.code) > -1;
+    })[0];
     return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get datePaid() {
-    const transaction = this.transaction.find(t => t.code === Transaction.TYPES.PAY);
+    const transaction = this.transaction.filter(function (t) {
+      return t.code === Transaction.TYPES.PAY;
+    })[0];
     return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get dateReserved() {
-    const transaction = this.transaction.find(t => t.code === Transaction.TYPES.RESERVE);
+    const transaction = this.transaction.filter(function (t) {
+      return t.code === Transaction.TYPES.RESERVE;
+    })[0];
     return transaction ? transaction.date.toLocaleDateString() : '';
   }
 
   get isDonated() {
-    return !!this.transaction.find(t => t.code === Transaction.TYPES.DONATE);
+    return !!this.transaction.filter(function (t) {
+      return t.code === Transaction.TYPES.DONATE;
+    })[0];
   }
 
   get isSold() {
@@ -226,7 +246,7 @@ class Phone {
   toString() {
     const number = this.number.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
     const hasNote = this.note && this.note !== '';
-    return hasNote ? `${number} (${this.note})` : number;
+    return hasNote ? number + '(' + this.note + ')' : number;
   }
 }
 
@@ -234,16 +254,23 @@ class Phone {
 class Account {
   constructor(data) {
     const account = data || {};
-    this.registration = new Date(account.registration);
-    this.lastActivity = new Date(account.lastActivity);
-    this.comment = account.comment ? account.comment.map(comment => new Comment(comment)) : [];
-    this.copies = account.copies ? account.copies.map(copy => new Copy(copy)) : [];
+
+    this.registration = new Date('2014-01-20T00:00:00');
+
+    this.registration = new Date((account.registration || '').replace(' ', 'T'));
+    this.lastActivity = new Date((account.lastActivity || '').replace(' ', 'T'));
+    this.comment = account.comment ? account.comment.map(function (comment) {
+      return new Comment(comment);
+    }) : [];
+    this.copies = account.copies ? account.copies.map(function (copy) {
+      return new Copy(copy);
+    }) : [];
     this.transfers = account.transfers || [];
     this.itemFeed = account.itemFeed || [];
   }
 
   get deactivationDate() {
-    const date = new Date(this.lastActivity);
+    const date = new Date(this.lastActivity.toISOString());
     date.setFullYear(this.lastActivity.getFullYear() + 1);
     return date;
   }
@@ -253,15 +280,21 @@ class Account {
   }
 
   getAddedCopies() {
-    return this.copies.filter(copy => copy.isAdded || copy.isReserved);
+    return this.copies.filter(function (copy) {
+      return copy.isAdded || copy.isReserved;
+    });
   }
 
   getSoldCopies() {
-    return this.copies.filter(copy => copy.isSold);
+    return this.copies.filter(function (copy) {
+      return copy.isSold;
+    });
   }
 
   getPaidCopies() {
-    return this.copies.filter(copy => copy.isPaid);
+    return this.copies.filter(function (copy) {
+      return copy.isPaid;
+    });
   }
 }
 
@@ -277,7 +310,9 @@ class Member {
     this.zip = member.zip || '';
     this.city = new City(member.city);
     this.account = new Account(member.account);
-    this.phone = (member.phone || []).map(phone => new Phone(phone));
+    this.phone = (member.phone || []).map(function (phone) {
+      return new Phone(phone);
+    });
 
     while (this.phone.length < 2) {
       this.phone.push(new Phone());
@@ -285,18 +320,26 @@ class Member {
   }
 
   get name() {
-    return `${this.firstName} ${this.lastName}`;
+    return this.firstName + ' ' + this.lastName;
   }
 
   get contactInfo() {
     const data = {
       address: this.address,
-      city: `${this.city.name} (${this.city.state.name})`,
+      city: this.city.name + '(' + this.city.state.name + ')',
       zip: this.zip.replace(/(.{3})(.{3})/, '$1 $2'),
-      phone: this.phone.filter(phone => phone.number).map(phone => phone.toString()).join('\n'),
+      phone: this.phone.filter(function (phone) {
+        return phone.number;
+      }).map(function (phone) {
+        return phone.toString();
+      }).join('\n'),
       email: this.email,
     };
 
-    return Object.keys(data).filter(key => data[key]).map(key => data[key]).join('\n');
+    return Object.keys(data).filter(function (key) {
+      return data[key];
+    }).map(function (key) {
+      return data[key];
+    }).join('\n');
   }
 }
